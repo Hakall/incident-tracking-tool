@@ -1,0 +1,6 @@
+{
+  "name": "incident-tracking-tool",
+  "workspaces": [
+    "server"
+  ]
+}
