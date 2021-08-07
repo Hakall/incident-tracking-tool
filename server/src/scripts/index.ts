@@ -1,0 +1,1 @@
+export { insertData } from "./insertData";
