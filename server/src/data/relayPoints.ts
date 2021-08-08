@@ -1,4 +1,4 @@
-import { RelayPoint } from "../models";
+import { RelayPoint } from "@itt/common";
 
 export const relayPoints: RelayPoint[] = [
   {

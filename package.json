@@ -1,6 +1,8 @@
 {
-  "name": "incident-tracking-tool",
+  "name": "@itt/incident-tracking-tool",
   "workspaces": [
+    "client",
+    "common",
     "server"
   ]
 }

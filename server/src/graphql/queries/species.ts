@@ -1,5 +1,5 @@
 import { db } from "../../loaders";
-import { Species } from "../../models";
+import { Species } from "@itt/common";
 
 export const SpeciesResolver = () => {
   return new Promise<Species[]>((resolve, reject) => {

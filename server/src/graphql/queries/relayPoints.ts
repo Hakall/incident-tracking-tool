@@ -1,5 +1,5 @@
 import { db } from "../../loaders";
-import { RelayPoint } from "../../models";
+import { RelayPoint } from "@itt/common";
 
 export const RelayPointsResolver = () => {
   return new Promise<RelayPoint[]>((resolve, reject) => {

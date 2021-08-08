@@ -1,4 +1,4 @@
-import { Species } from "../models";
+import { Species } from "@itt/common";
 
 export const species: Species[] = [
   {

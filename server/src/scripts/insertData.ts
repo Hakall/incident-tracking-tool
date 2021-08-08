@@ -1,6 +1,6 @@
 import { db } from "../loaders";
 import { relayPoints, species } from "../data";
-import { RelayPoint, Species } from "../models";
+import { RelayPoint, Species } from "@itt/common";
 
 const insertData = async () => {
   await new Promise<RelayPoint[]>((resolve, reject) => {

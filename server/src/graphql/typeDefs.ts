@@ -77,4 +77,8 @@ export const typeDefs = gql`
     relayPoints: [RelayPoint]
     species: [Species]
   }
+
+  type Mutation {
+    createIncident(emails: [String]!): Incident
+  }
 `;
