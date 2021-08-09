@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { CREATE_INCIDENT } from "../../graphql/Mutations";
+import { CREATE_INCIDENT } from "../gql/Mutations";
 
 function ITTForm() {
   const [createIncident, { data, loading, error }] =
@@ -27,4 +27,4 @@ function ITTForm() {
   );
 }
 
-export { ITTForm as Form };
+export default ITTForm;

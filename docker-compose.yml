@@ -14,16 +14,14 @@ services:
     volumes:
       - ./:/home/node/app
     working_dir: /home/node/app
-    restart: always
 
   client:
     container_name: itt-client
     image: node:15.14.0-alpine3.12
-    command: "npm run start -w client"
+    command: "npm run dev -w client"
     ports:
       - 3000:3000
     user: node
     volumes:
       - ./:/home/node/app
     working_dir: /home/node/app
-    restart: always
