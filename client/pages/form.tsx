@@ -1,27 +1,49 @@
 import { useMutation } from "@apollo/client";
-import React from "react";
-import { useForm } from "react-hook-form";
+import React, { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
 import { CREATE_INCIDENT } from "../gql/Mutations";
+import { EmailsInput } from "./components/EmailsInput";
+
+export interface IncidentToCreate {
+  emails: string[];
+}
 
 function ITTForm() {
+  const [incidentToCreate, setIncidentToCreate] = useState<IncidentToCreate>({
+    emails: [],
+  });
   const [createIncident, { data, loading, error }] =
     useMutation(CREATE_INCIDENT);
   const {
     register,
     handleSubmit,
-    // watch,
+    control,
     formState: { errors },
   } = useForm();
-  const onSubmit = async (formdata: any) => {
-    console.log(formdata);
-    await createIncident({ variables: { emails: [formdata.email] } });
+  const onSubmit = async () => {
+    await createIncident({ variables: { ...incidentToCreate } });
+    setIncidentToCreate({
+      emails: [],
+    });
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <input type="email" {...register("email", { required: true })} />
-      {/* errors will return when field validation fails  */}
-      {errors.email && <span>This field is required</span>}
+      <Controller
+        control={control}
+        name="emails"
+        render={() => (
+          <EmailsInput
+            emails={incidentToCreate.emails}
+            onChange={setIncidentToCreate}
+          ></EmailsInput>
+        )}
+        rules={{
+          validate: () =>
+            incidentToCreate.emails && incidentToCreate.emails.length !== 0,
+        }}
+      />
+      {errors.emails && <span>{JSON.stringify(errors.emails)}</span>}
       <button type="submit">Submit</button>
     </form>
   );
