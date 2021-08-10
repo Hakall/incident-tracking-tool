@@ -1,5 +1,4 @@
 import React from "react";
-import { IncidentToCreate } from "../form";
 import Select from "react-select";
 import { useQuery } from "@apollo/client";
 import { GET_RELAY_POINTS } from "../../gql/Queries";

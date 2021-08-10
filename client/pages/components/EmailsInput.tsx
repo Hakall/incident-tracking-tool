@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import CreatableSelect from "react-select";
 
-const emailRegexp = new RegExp(
-  /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gm
-);
-
 const components = {
   DropdownIndicator: null,
 };
@@ -29,7 +25,7 @@ function EmailsInput({ onChange, emails }: EmailsInputProps) {
     console.group("Value Changed");
     console.log(value);
     console.log(`action: ${actionMeta.action}`);
-    // todo check incidentToCreate.emails.every((mail) => emailRegexp.test(mail))
+    // todo check mail on change ?
     console.groupEnd();
     onChange({ emails: value.map((mail) => mail.value) });
     setEmailsState({ inputValue: "" });

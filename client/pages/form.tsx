@@ -10,6 +10,8 @@ import { RelayPointsSelect } from "./components/RelayPointsSelect";
 //   relayPointId?: string;
 // }
 
+const mailRegex = /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gm;
+
 function ITTForm() {
   const [createIncident, { data, loading, error }] =
     useMutation(CREATE_INCIDENT);
@@ -44,7 +46,8 @@ function ITTForm() {
           ></EmailsInput>
         )}
         rules={{
-          validate: (v) => v && v.length !== 0,
+          validate: (v: string[]) =>
+            v && v.length !== 0 && !v.some((mail) => !mail.match(mailRegex)),
         }}
       />
       <br />
@@ -63,10 +66,8 @@ function ITTForm() {
           />
         )}
         rules={{
-          validate: (v) => {
-            console.log("v", v);
-            return true;
-          },
+          validate: (v) =>
+            v !== null && typeof v === "string" && v.trim() !== "",
         }}
       />
       <br />
