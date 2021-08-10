@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import CreatableSelect from "react-select";
-import { IncidentToCreate } from "../form";
 
 const emailRegexp = new RegExp(
   /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gm
 );
 
+const components = {
+  DropdownIndicator: null,
+};
+
 interface EmailsInputProps {
-  onChange: (incidentToCreate: IncidentToCreate) => void;
+  onChange: (val: any) => void;
   emails: string[];
 }
 
@@ -60,6 +63,7 @@ function EmailsInput({ onChange, emails }: EmailsInputProps) {
 
   return (
     <CreatableSelect
+      components={components}
       inputValue={emailsState.inputValue}
       isClearable
       isMulti

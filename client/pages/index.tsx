@@ -1,13 +1,8 @@
 import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
-import { useQuery } from "@apollo/client";
-import { GET_RELAY_POINTS } from "../gql/Queries";
 
 export default function Home() {
-  const { data, loading, error } = useQuery(GET_RELAY_POINTS);
-  console.log(data, loading, error);
-
   return (
     <div className={styles.container}>
       <Head>
