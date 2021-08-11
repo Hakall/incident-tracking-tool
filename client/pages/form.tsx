@@ -8,21 +8,8 @@ import { IncidentTypeSelect } from "./components/IncidentTypeSelect";
 import { IncidentCauseSelect } from "./components/IncidentCauseSelect";
 import { IncidentResolutionSelect } from "./components/IncidentResolutionSelect";
 import { SpeciesSelect } from "./components/SpeciesSelect";
-import { IncidentCause, IncidentResolution, IncidentType } from "@itt/common";
 
 const mailRegex = /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gm;
-
-export interface IncidentToCreate {
-  emails: string[];
-  date: string;
-  relayPointId: string;
-  type: string;
-  cause: string;
-  resolution: string;
-  refundAmount?: number;
-  speciesId?: string;
-  comment?: string;
-}
 
 function ITTForm() {
   const [createIncident, { data, loading, error }] =
@@ -50,9 +37,9 @@ function ITTForm() {
         type: incidentToCreate.type,
         cause: incidentToCreate.cause,
         resolution: incidentToCreate.resolution,
-        ...(incidentToCreate.refundAMount &&
-          incidentToCreate.refundAMount !== "" && {
-            refundAMount: incidentToCreate.refundAMount,
+        ...(incidentToCreate.refundAmount &&
+          incidentToCreate.refundAmount !== "" && {
+            refundAmount: Number(incidentToCreate.refundAmount),
           }),
         ...(incidentToCreate.speciesId &&
           incidentToCreate.speciesId !== "" && {
@@ -89,9 +76,15 @@ function ITTForm() {
       {errors.emails && <span>{JSON.stringify(errors.emails)}</span>}
       <br />
       {/* todo default date this day, maybe from previous incident for same mail*/}
-      <input type="date" {...register("date")} required />
+      <input
+        type="date"
+        {...register("date", {
+          validate: (v) => (v ? !Number.isNaN(new Date(v).getTime()) : true),
+        })}
+        required
+      />
       <br />
-      {errors.date && <span>{JSON.stringify(errors.date)}</span>}
+      {errors.date && <span>{`${errors.date}`}</span>}
       <br />
       <Controller
         control={control}
@@ -192,7 +185,14 @@ function ITTForm() {
       <br />
       {errors.speciesId && <span>{JSON.stringify(errors.speciesId)}</span>}
       <br />
-      <input type="number" {...register("refundAmount")} step="0.01" min="0" />
+      <input
+        type="number"
+        {...register("refundAmount", {
+          validate: (v) => (v ? !Number.isNaN(v) : true),
+        })}
+        step="0.01"
+        min="0"
+      />
       <br />
       {errors.refundAmount && (
         <span>{JSON.stringify(errors.refundAmount)}</span>

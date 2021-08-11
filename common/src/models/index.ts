@@ -5,4 +5,5 @@ export {
   IncidentType,
   IncidentCause,
   IncidentResolution,
+  IncidentToCreate,
 } from "./incident";

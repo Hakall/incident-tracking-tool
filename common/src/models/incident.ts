@@ -61,3 +61,15 @@ export interface Incident {
   refundAmount?: number;
   comment?: string;
 }
+
+export interface IncidentToCreate {
+  emails: string[];
+  date: string;
+  relayPointId: string;
+  type: string;
+  cause: string;
+  resolution: string;
+  refundAmount?: number;
+  speciesId?: string;
+  comment?: string;
+}
