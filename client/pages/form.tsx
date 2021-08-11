@@ -179,7 +179,8 @@ function ITTForm() {
         )}
         rules={{
           validate: (v) =>
-            v !== null && typeof v === "string" && v.trim() !== "",
+            // todo adapt validator with type
+            v === null || (typeof v === "string" && v.trim() !== ""),
         }}
       />
       <br />

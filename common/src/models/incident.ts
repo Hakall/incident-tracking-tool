@@ -25,7 +25,7 @@ export enum IncidentCause {
   SAND = "Sable",
   OVERSIGHT = "Oubli",
   PAYMENT = "Paiement",
-  DISSATISAFCTION = "Insatisfaction",
+  DISSATISFACTION = "Insatisfaction",
   BROWSER = "Navigateur",
   MAIL_NOT_RECEIVED = "Email non reçu",
   IMPOSSIBLE_ORDER = "Commande impossible",
