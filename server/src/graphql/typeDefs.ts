@@ -54,9 +54,9 @@ export const typeDefs = gql`
     date: String!
     emails: [String]!
     relayPoint: RelayPoint!
-    type: RelayPoint!
-    cause: RelayPoint!
-    resolution: RelayPoint!
+    type: IncidentType!
+    cause: IncidentCause!
+    resolution: IncidentResolution!
     species: Species
     refundAmount: Float
     comment: String
@@ -79,6 +79,16 @@ export const typeDefs = gql`
   }
 
   type Mutation {
-    createIncident(emails: [String]!): Incident
+    createIncident(
+      emails: [String]!
+      type: IncidentType!
+      resolution: IncidentResolution!
+      cause: IncidentCause!
+      date: String!
+      relayPointId: String!
+      speciesId: String
+      refundAmount: Float
+      comment: String
+    ): Incident
   }
 `;

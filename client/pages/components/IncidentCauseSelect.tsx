@@ -7,12 +7,12 @@ interface IncidentCauseSelectProps {
   value: string;
 }
 
-const IncidentCauseSelect = ({ onChange, value }: IncidentCauseSelectProps) => {
-  const options = Object.values(IncidentCause).map((type) => ({
-    value: type,
-    label: type,
-  }));
+const options = Object.keys(IncidentCause).map((key) => ({
+  value: key,
+  label: IncidentCause[key as keyof typeof IncidentCause],
+}));
 
+const IncidentCauseSelect = ({ onChange, value }: IncidentCauseSelectProps) => {
   const selectedValue = React.useMemo(() => {
     const optionValue = options.find((option) => option.value === value);
     return optionValue ? optionValue : { value: "", label: "" };

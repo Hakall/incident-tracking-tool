@@ -8,13 +8,21 @@ import { IncidentTypeSelect } from "./components/IncidentTypeSelect";
 import { IncidentCauseSelect } from "./components/IncidentCauseSelect";
 import { IncidentResolutionSelect } from "./components/IncidentResolutionSelect";
 import { SpeciesSelect } from "./components/SpeciesSelect";
-
-// export interface IncidentToCreate {
-//   emails: string[];
-//   relayPointId?: string;
-// }
+import { IncidentCause, IncidentResolution, IncidentType } from "@itt/common";
 
 const mailRegex = /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gm;
+
+export interface IncidentToCreate {
+  emails: string[];
+  date: string;
+  relayPointId: string;
+  type: string;
+  cause: string;
+  resolution: string;
+  refundAmount?: number;
+  speciesId?: string;
+  comment?: string;
+}
 
 function ITTForm() {
   const [createIncident, { data, loading, error }] =
@@ -30,10 +38,32 @@ function ITTForm() {
 
   const onSubmit = async () => {
     console.log("onSubmit");
-    console.log("getValues()", getValues());
-    setValue("relayPointId", null);
-    setValue("emails", []);
-    await createIncident({ variables: { emails: [] } });
+    // setValue("relayPointId", null);
+    // setValue("emails", []);
+    const incidentToCreate = getValues();
+
+    await createIncident({
+      variables: {
+        emails: incidentToCreate.emails,
+        date: incidentToCreate.date,
+        relayPointId: incidentToCreate.relayPointId,
+        type: incidentToCreate.type,
+        cause: incidentToCreate.cause,
+        resolution: incidentToCreate.resolution,
+        ...(incidentToCreate.refundAMount &&
+          incidentToCreate.refundAMount !== "" && {
+            refundAMount: incidentToCreate.refundAMount,
+          }),
+        ...(incidentToCreate.speciesId &&
+          incidentToCreate.speciesId !== "" && {
+            speciesId: incidentToCreate.speciesId,
+          }),
+        ...(incidentToCreate.comment &&
+          incidentToCreate.comment !== "" && {
+            comment: incidentToCreate.comment,
+          }),
+      },
+    });
   };
 
   return (
@@ -58,7 +88,8 @@ function ITTForm() {
       <br />
       {errors.emails && <span>{JSON.stringify(errors.emails)}</span>}
       <br />
-      <input type="date" {...(register("date"), { required: true })} />
+      {/* todo default date this day, maybe from previous incident for same mail*/}
+      <input type="date" {...register("date")} required />
       <br />
       {errors.date && <span>{JSON.stringify(errors.date)}</span>}
       <br />
@@ -87,7 +118,7 @@ function ITTForm() {
       <Controller
         control={control}
         defaultValue={null}
-        name="incidentType"
+        name="type"
         render={({ field: { onChange, value } }) => (
           <IncidentTypeSelect
             onChange={(val) => {
@@ -102,13 +133,11 @@ function ITTForm() {
         }}
       />
       <br />
-      {errors.incidentType && (
-        <span>{JSON.stringify(errors.incidentType)}</span>
-      )}
+      {errors.type && <span>{JSON.stringify(errors.type)}</span>}
       <Controller
         control={control}
         defaultValue={null}
-        name="incidentCause"
+        name="cause"
         render={({ field: { onChange, value } }) => (
           <IncidentCauseSelect
             onChange={(val) => {
@@ -123,13 +152,11 @@ function ITTForm() {
         }}
       />
       <br />
-      {errors.incidentCause && (
-        <span>{JSON.stringify(errors.incidentCause)}</span>
-      )}
+      {errors.cause && <span>{JSON.stringify(errors.cause)}</span>}
       <Controller
         control={control}
         defaultValue={null}
-        name="incidentResolution"
+        name="resolution"
         render={({ field: { onChange, value } }) => (
           <IncidentResolutionSelect
             onChange={(val) => {
@@ -144,9 +171,7 @@ function ITTForm() {
         }}
       />
       <br />
-      {errors.incidentResolution && (
-        <span>{JSON.stringify(errors.incidentResolution)}</span>
-      )}
+      {errors.resolution && <span>{JSON.stringify(errors.resolution)}</span>}
       <Controller
         control={control}
         defaultValue={null}
