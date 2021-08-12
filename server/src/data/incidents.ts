@@ -1,4 +1,5 @@
-import { Incident, RelayPoint } from "@itt/common";
+import { Incident, RelayPoint, Species } from "@itt/common";
+import { causesByType } from "@itt/common/src/validators";
 
 const emails = [
   "luke.skywalker@rebels.org",
@@ -12,17 +13,31 @@ const emails = [
 ];
 
 const dates = [
+  "2021-08-13",
   "2021-08-12",
   "2021-08-11",
   "2021-08-10",
   "2021-08-09",
   "2021-08-08",
   "2021-08-07",
+  "2021-08-06",
+  "2021-08-01",
 ];
 
-const incidentsPrototypes = [
+const incidentsPrototypes: {
+  type: string;
+  cause?: string;
+  resolution: string[];
+  species?: Species;
+}[] = [
   { type: "DELIVERY", cause: "DELAY", resolution: ["PHONE_CALL"] },
   { type: "DELIVERY", cause: "UNDELIVERED", resolution: ["REFUND"] },
+  { type: "PRODUCT", resolution: ["REFUND", "PHONE_CALL"] },
+  { type: "PRODUCT", resolution: ["PARTIAL_REFUND", "MAIL"] },
+  { type: "PRODUCT", resolution: ["REFUND", "MAIL"] },
+  { type: "PRODUCT", resolution: ["PARTIAL_REFUND", "PHONE_CALL"] },
+  { type: "PRODUCT", resolution: ["REFUND"] },
+  { type: "PRODUCT", resolution: ["PARTIAL_REFUND"] },
   {
     type: "RELAY_POINT",
     cause: "WRONG_ADDRESS",
@@ -49,7 +64,8 @@ const getRandomMails = (): string[] => {
 
 export const incidents = (
   numberOfIncidents: number,
-  relayPoints: RelayPoint[]
+  relayPoints: RelayPoint[],
+  species: Species[]
 ): Incident[] => {
   const incidents: Incident[] = [];
   for (let i = 0; i < numberOfIncidents; i++) {
@@ -59,10 +75,20 @@ export const incidents = (
     );
     const dateIndex = Math.floor(Math.random() * dates.length);
     const relayPointIndex = Math.floor(Math.random() * relayPoints.length);
+    const incident = { ...incidentsPrototypes[incidentPrototypeIndex] };
+
+    if (incident.type === "PRODUCT") {
+      const productCauses = causesByType("PRODUCT");
+      const causeIndex = Math.floor(Math.random() * productCauses.length);
+      const speciesIndex = Math.floor(Math.random() * species.length);
+      incident.cause = productCauses[causeIndex];
+      incident.species = species[speciesIndex];
+    }
+
     incidents.push({
       emails: mails,
       date: dates[dateIndex],
-      ...incidentsPrototypes[incidentPrototypeIndex],
+      ...incident,
       relayPoint: relayPoints[relayPointIndex],
       ...(incidentsPrototypes[incidentPrototypeIndex].resolution.find(
         (resolution) => ["PARTIAL_REFUND", "REFUND"]

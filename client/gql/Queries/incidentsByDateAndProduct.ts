@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
-const FIND_SIMILAR_INCIDENT = gql`
-  query FindSimilarIncident($incident: SimilarIncident) {
-    findSimilarIncident(incident: $incident) {
+const INCIDENTS_BY_DATE_AND_PRODUCT = gql`
+  query GetIncidentsByDateAndProduct($pagination: Pagination) {
+    incidentsByDateAndProduct(pagination: $pagination) {
       _id
       date
       emails
@@ -24,4 +24,4 @@ const FIND_SIMILAR_INCIDENT = gql`
   }
 `;
 
-export { FIND_SIMILAR_INCIDENT };
+export { INCIDENTS_BY_DATE_AND_PRODUCT };

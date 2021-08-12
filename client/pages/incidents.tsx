@@ -8,6 +8,7 @@ import {
   IncidentType,
 } from "@itt/common";
 import { GET_INCIDENTS } from "../gql/Queries";
+import GroupedByDateAndProduct from "./components/GroupedByDateAndProduct";
 
 interface IncidentsData {
   incidents: Incident[];
@@ -139,6 +140,7 @@ function Incidents() {
         <button onClick={goPrev}>Previous</button>
         <button onClick={goNext}>Next</button>
       </div>
+      <GroupedByDateAndProduct></GroupedByDateAndProduct>
     </>
   );
 }

@@ -1,16 +1,19 @@
-import { Species } from "@itt/common";
+import { Incident, Species } from "@itt/common";
 import { db } from "../loaders";
 import { species } from "../data";
 
 class SpeciesInterface {
-  async getSpecies(): Promise<Species[]> {
+  async getSpecies(size = 0): Promise<Species[]> {
     return new Promise<Species[]>((resolve, reject) => {
-      db.species.find({}, (err: Error, docs: Species[]) => {
-        if (err) {
-          reject(err);
-        }
-        resolve(docs);
-      });
+      db.species
+        .find({})
+        .limit(size)
+        .exec((err: Error | null, docs: Species[]) => {
+          if (err) {
+            reject(err);
+          }
+          resolve(docs);
+        });
     });
   }
 

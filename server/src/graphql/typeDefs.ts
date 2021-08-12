@@ -87,6 +87,7 @@ export const typeDefs = gql`
     relayPoints: [RelayPoint]
     species: [Species]
     incidents(pagination: Pagination): [Incident]
+    incidentsByDateAndProduct(pagination: Pagination): [[Incident]]
     findSimilarIncident(incident: SimilarIncident): [Incident]
   }
 

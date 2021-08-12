@@ -1,7 +1,9 @@
-import { Incident, Species } from "@itt/common";
+import { Incident } from "@itt/common";
+import groupBy from "lodash/groupBy";
 import { db } from "../loaders";
 import { incidents } from "../data/incidents";
 import { relayPointInterface } from "./RelayPointInterface";
+import { speciesInterface } from "./SpeciesInterface";
 
 class IncidentInterface {
   async insertIncident(incident: Incident): Promise<Incident> {
@@ -32,11 +34,42 @@ class IncidentInterface {
     });
   }
 
+  async getIncidentsByDateAndProduct(
+    size: number,
+    page: number
+  ): Promise<Incident[][]> {
+    const incidents = await new Promise<Incident[]>((resolve, reject) => {
+      db.incidents
+        .find({
+          type: "PRODUCT",
+          refundAmount: { $exists: true },
+          species: { $exists: true },
+        })
+        .sort({ date: 1, "species.name": 1 })
+        .exec((err: Error | null, docs: Incident[]) => {
+          if (err) {
+            reject(err);
+          }
+          resolve(docs);
+        });
+    });
+
+    const grouped = groupBy(
+      incidents,
+      (elem: Incident) => `${elem.species!._id}${elem.date}`
+    );
+
+    return Object.keys(grouped)
+      .map((key) => grouped[key])
+      .slice((page - 1) * size, page * size);
+  }
+
   async insertIncidentsFromFileData(): Promise<Incident[]> {
     const relayPoints = await relayPointInterface.getRelayPoints();
+    const species = await speciesInterface.getSpecies(10);
     return new Promise<Incident[]>((resolve, reject) => {
       db.incidents.insert(
-        incidents(100, relayPoints),
+        incidents(800, relayPoints, species),
         (err: Error | null, newDocs: Incident[]) => {
           if (err) {
             reject(err);
