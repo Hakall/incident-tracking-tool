@@ -50,7 +50,7 @@ export enum IncidentResolution {
 }
 
 export interface Incident {
-  _id: string;
+  _id?: string;
   emails: string[];
   relayPoint: RelayPoint;
   date: Date;

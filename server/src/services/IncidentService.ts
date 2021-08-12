@@ -1,4 +1,4 @@
-import { Incident, IncidentToCreate, IncidentType } from "@itt/common";
+import { Incident, IncidentToCreate } from "@itt/common";
 import { validateIncident } from "@itt/common/src/validators";
 import {
   incidentInterface,
@@ -17,15 +17,15 @@ class IncidentService {
       ? await speciesInterface.getSpeciesById(incidentToCreate.speciesId)
       : null;
 
-    const newIncident: Incident = {
+    const incident: Incident = {
       ...incidentToCreate,
       date: new Date(incidentToCreate.date),
       relayPoint,
       ...(species && { species }),
-      _id: "",
     } as Incident;
+
     // todo change IncidentToCreate to Incident when validations are done
-    return incidentInterface.insertIncident(incidentToCreate);
+    return incidentInterface.insertIncident(incident);
   }
 }
 

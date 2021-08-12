@@ -29,28 +29,30 @@ function ITTForm() {
     // setValue("emails", []);
     const incidentToCreate = getValues();
 
-    await createIncident({
-      variables: {
-        emails: incidentToCreate.emails,
-        date: incidentToCreate.date,
-        relayPointId: incidentToCreate.relayPointId,
-        type: incidentToCreate.type,
-        cause: incidentToCreate.cause,
-        resolution: incidentToCreate.resolution,
-        ...(incidentToCreate.refundAmount &&
-          incidentToCreate.refundAmount !== "" && {
-            refundAmount: Number(incidentToCreate.refundAmount),
-          }),
-        ...(incidentToCreate.speciesId &&
-          incidentToCreate.speciesId !== "" && {
-            speciesId: incidentToCreate.speciesId,
-          }),
-        ...(incidentToCreate.comment &&
-          incidentToCreate.comment !== "" && {
-            comment: incidentToCreate.comment,
-          }),
-      },
-    });
+    try {
+      await createIncident({
+        variables: {
+          emails: incidentToCreate.emails,
+          date: incidentToCreate.date,
+          relayPointId: incidentToCreate.relayPointId,
+          type: incidentToCreate.type,
+          cause: incidentToCreate.cause,
+          resolution: incidentToCreate.resolution,
+          ...(incidentToCreate.refundAmount &&
+            incidentToCreate.refundAmount !== "" && {
+              refundAmount: Number(incidentToCreate.refundAmount),
+            }),
+          ...(incidentToCreate.speciesId &&
+            incidentToCreate.speciesId !== "" && {
+              speciesId: incidentToCreate.speciesId,
+            }),
+          ...(incidentToCreate.comment &&
+            incidentToCreate.comment !== "" && {
+              comment: incidentToCreate.comment,
+            }),
+        },
+      });
+    } catch (e) {}
   };
 
   return (
