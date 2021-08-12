@@ -1,25 +1,17 @@
-import { db } from "../loaders";
-import { relayPoints, species } from "../data";
-import { RelayPoint, Species } from "@itt/common";
+import { relayPointInterface, speciesInterface } from "../interfaces";
 
 const insertData = async () => {
-  await new Promise<RelayPoint[]>((resolve, reject) => {
-    db.relayPoints.insert(relayPoints, (err, newDocs) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(newDocs);
-    });
-  });
+  const relayPoints = await relayPointInterface.getRelayPoints();
+  if (!relayPoints || !relayPoints.length) {
+    await relayPointInterface.insertRelayPointsFromFileData();
+  }
 
-  await new Promise<Species[]>((resolve, reject) => {
-    db.species.insert(species, (err, newDocs) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(newDocs);
-    });
-  });
+  const species = await speciesInterface.getSpecies();
+  if (!species || !species.length) {
+    await speciesInterface.insertSpeciesFromFileData();
+  }
+
+  //  todo add incidents for charts
 };
 
 export { insertData };

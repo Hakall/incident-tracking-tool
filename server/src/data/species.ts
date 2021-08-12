@@ -11,9 +11,6 @@ export const species: Species[] = [
     name: "Alose",
   },
   {
-    name: "Alose",
-  },
-  {
     name: "Amande de mer",
   },
   {

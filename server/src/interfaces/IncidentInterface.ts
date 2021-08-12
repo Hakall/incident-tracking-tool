@@ -11,7 +11,7 @@ class IncidentInterface {
         (err: Error | null, docs: IncidentToCreate[]) => {
           const [doc] = docs;
           if (err || !doc) {
-            reject(err);
+            reject(err || "Unable to create Incident");
           }
           resolve(doc);
         }
