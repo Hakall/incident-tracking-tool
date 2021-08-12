@@ -46,6 +46,23 @@ class IncidentInterface {
       );
     });
   }
+
+  async findSimilarIncident(
+    emails: string[],
+    date: string
+  ): Promise<Incident[]> {
+    return new Promise<Incident[]>((resolve, reject) => {
+      db.incidents
+        .find({ emails, date })
+        .sort({ date: -1 })
+        .exec((err: Error | null, newDocs: Incident[]) => {
+          if (err) {
+            reject(err);
+          }
+          resolve(newDocs);
+        });
+    });
+  }
 }
 
 const incidentInterface = new IncidentInterface();

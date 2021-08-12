@@ -53,7 +53,7 @@ export const incidents = (
     const relayPointIndex = Math.floor(Math.random() * relayPoints.length);
     incidents.push({
       emails: mails,
-      date: new Date(dates[dateIndex]),
+      date: dates[dateIndex],
       ...incidentsPrototypes[incidentPrototypeIndex],
       relayPoint: relayPoints[relayPointIndex],
       ...((incidentsPrototypes[incidentPrototypeIndex].resolution ===

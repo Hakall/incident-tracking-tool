@@ -14,7 +14,7 @@ interface IncidentsData {
 }
 
 function Incidents() {
-  const [pagination, setPagination] = useState({ size: 10, page: 1 });
+  const [pagination, setPagination] = useState({ size: 25, page: 1 });
   const { data, loading, error } = useQuery<IncidentsData>(GET_INCIDENTS, {
     variables: {
       pagination,
@@ -34,7 +34,7 @@ function Incidents() {
         }) => ({
           emails: emails.join(" "),
           relayPoint: `${relayPoint.name}, ${relayPoint.day}`,
-          date: new Date(Number(date)).toLocaleDateString(),
+          date: new Date(date).toLocaleDateString(),
           type: IncidentType[type as unknown as keyof typeof IncidentType],
           cause: IncidentCause[cause as unknown as keyof typeof IncidentCause],
           resolution:

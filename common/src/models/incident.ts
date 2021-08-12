@@ -53,7 +53,7 @@ export interface Incident {
   _id?: string;
   emails: string[];
   relayPoint: RelayPoint;
-  date: Date;
+  date: string;
   type: IncidentType;
   cause: IncidentCause;
   species?: Species;

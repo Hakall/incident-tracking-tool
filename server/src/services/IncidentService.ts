@@ -19,7 +19,7 @@ class IncidentService {
 
     const incident: Incident = {
       ...incidentToCreate,
-      date: new Date(incidentToCreate.date),
+      date: incidentToCreate.date,
       relayPoint,
       ...(species && { species }),
     } as Incident;
