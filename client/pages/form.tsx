@@ -164,6 +164,7 @@ function ITTForm() {
         }}
       />
       <br />
+      {/* todo resolution shuld be a list*/}
       {errors.resolution && <span>{JSON.stringify(errors.resolution)}</span>}
       <Controller
         control={control}
