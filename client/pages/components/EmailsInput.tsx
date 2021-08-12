@@ -22,37 +22,32 @@ function EmailsInput({ onChange, emails }: EmailsInputProps) {
   }, [emails]);
 
   const handleChange = (value: any, actionMeta: any) => {
-    console.group("Value Changed");
-    console.log(value);
-    console.log(`action: ${actionMeta.action}`);
     // todo check mail on change ?
-    console.groupEnd();
-    onChange({ emails: value.map((mail) => mail.value) });
+    onChange({
+      emails: value.map((mail: { value: string }) => mail.value.trim()),
+    });
     setEmailsState({ inputValue: "" });
   };
 
   const handleInputChange = (inputValue: string) => {
-    console.group("Input Changed");
-    console.log(inputValue);
-    console.groupEnd();
-    setEmailsState({ inputValue });
+    setEmailsState({ inputValue: inputValue.trim() });
   };
   const handleKeyDown = (event: any) => {
     if (!emailsState.inputValue || emailsState.inputValue.trim() === "") return;
     switch (event.key) {
       case "Enter":
       case "Tab":
-        console.group("Value Added");
         const value = [
           ...values,
-          { label: emailsState.inputValue, value: emailsState.inputValue },
+          {
+            label: emailsState.inputValue.trim(),
+            value: emailsState.inputValue.trim(),
+          },
         ];
-        console.log(value);
-        console.groupEnd();
         setEmailsState({
           inputValue: "",
         });
-        onChange({ emails: value.map((mail) => mail.value) });
+        onChange({ emails: value.map((mail) => mail.value.trim()) });
         event.preventDefault();
     }
   };

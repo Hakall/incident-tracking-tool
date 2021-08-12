@@ -47,7 +47,7 @@ const causesByType = (type: string) => {
         "OTHER",
       ];
     default:
-      return null;
+      return Object.keys(IncidentCause);
   }
 };
 

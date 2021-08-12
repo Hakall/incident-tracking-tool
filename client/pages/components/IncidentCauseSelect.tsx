@@ -1,18 +1,26 @@
 import React from "react";
 import Select from "react-select";
 import { IncidentCause } from "@itt/common";
+import { causesByType } from "@itt/common/src/validators";
 
 interface IncidentCauseSelectProps {
   onChange: (val: any) => void;
   value: string;
+  type: string;
 }
 
-const options = Object.keys(IncidentCause).map((key) => ({
-  value: key,
-  label: IncidentCause[key as keyof typeof IncidentCause],
-}));
+const IncidentCauseSelect = ({
+  onChange,
+  value,
+  type,
+}: IncidentCauseSelectProps) => {
+  const options = React.useMemo(() => {
+    return causesByType(type).map((key) => ({
+      value: key,
+      label: IncidentCause[key as keyof typeof IncidentCause],
+    }));
+  }, [type]);
 
-const IncidentCauseSelect = ({ onChange, value }: IncidentCauseSelectProps) => {
   const selectedValue = React.useMemo(() => {
     const optionValue = options.find((option) => option.value === value);
     return optionValue ? optionValue : { value: "", label: "" };

@@ -36,6 +36,16 @@ function ITTForm() {
     name: "resolution",
   });
 
+  const emails = useWatch({
+    control,
+    name: "emails",
+  });
+
+  const date = useWatch({
+    control,
+    name: "date",
+  });
+
   const onSubmit = async () => {
     console.log("onSubmit");
     // setValue("relayPointId", null);
@@ -143,6 +153,7 @@ function ITTForm() {
             <IncidentTypeSelect
               onChange={(val) => {
                 onChange(val.value);
+                setValue("cause", null);
               }}
               value={value}
             />
@@ -164,6 +175,7 @@ function ITTForm() {
                 onChange(val.value);
               }}
               value={value}
+              type={type}
             />
           )}
           rules={{
@@ -249,10 +261,10 @@ function ITTForm() {
         <br />
         <button type="submit">Submit</button>
       </form>
-      {getValues().emails && getValues().date && (
+      {emails && date && (
         <SimilarIncident
-          emails={getValues().emails}
-          date={getValues().date}
+          emails={emails}
+          date={date}
           onClick={populateFormFromIncident}
         />
       )}

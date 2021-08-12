@@ -27,7 +27,6 @@ const SimilarIncident = (props: SimilarIncidentProps) => {
       {JSON.stringify(data.findSimilarIncident)}{" "}
       <button
         onClick={() => {
-          console.log(data.findSimilarIncident[0]);
           onClick(data.findSimilarIncident[0]);
         }}
       >
