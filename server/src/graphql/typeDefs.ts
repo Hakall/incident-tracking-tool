@@ -56,7 +56,7 @@ export const typeDefs = gql`
     relayPoint: RelayPoint!
     type: IncidentType!
     cause: IncidentCause!
-    resolution: IncidentResolution!
+    resolution: [IncidentResolution]!
     species: Species
     refundAmount: Float
     comment: String
@@ -94,7 +94,7 @@ export const typeDefs = gql`
     createIncident(
       emails: [String]!
       type: IncidentType!
-      resolution: IncidentResolution!
+      resolution: [IncidentResolution]!
       cause: IncidentCause!
       date: String!
       relayPointId: String!

@@ -57,7 +57,7 @@ export interface Incident {
   type: IncidentType;
   cause: IncidentCause;
   species?: Species;
-  resolution: IncidentResolution;
+  resolution: IncidentResolution[];
   refundAmount?: number;
   comment?: string;
 }
@@ -68,7 +68,7 @@ export interface IncidentToCreate {
   relayPointId: string;
   type: string;
   cause: string;
-  resolution: string;
+  resolution: string[];
   refundAmount?: number;
   speciesId?: string;
   comment?: string;

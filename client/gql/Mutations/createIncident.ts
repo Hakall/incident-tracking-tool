@@ -5,7 +5,7 @@ const CREATE_INCIDENT = gql`
     $emails: [String]!
     $type: IncidentType!
     $cause: IncidentCause!
-    $resolution: IncidentResolution!
+    $resolution: [IncidentResolution]!
     $date: String!
     $relayPointId: String!
     $speciesId: String
@@ -24,7 +24,6 @@ const CREATE_INCIDENT = gql`
       comment: $comment
     ) {
       _id
-      emails
     }
   }
 `;

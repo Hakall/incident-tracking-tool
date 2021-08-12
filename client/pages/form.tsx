@@ -1,6 +1,6 @@
 import React from "react";
 import { useMutation } from "@apollo/client";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useWatch } from "react-hook-form";
 import { CREATE_INCIDENT } from "../gql/Mutations";
 import { EmailsInput } from "./components/EmailsInput";
 import { RelayPointsSelect } from "./components/RelayPointsSelect";
@@ -25,6 +25,16 @@ function ITTForm() {
     formState: { errors },
     getValues,
   } = useForm();
+
+  const type = useWatch({
+    control,
+    name: "type",
+  });
+
+  const resolution = useWatch({
+    control,
+    name: "resolution",
+  });
 
   const onSubmit = async () => {
     console.log("onSubmit");
@@ -169,53 +179,70 @@ function ITTForm() {
           name="resolution"
           render={({ field: { onChange, value } }) => (
             <IncidentResolutionSelect
-              onChange={(val) => {
-                onChange(val.value);
+              onChange={(values: { value: string }[]) => {
+                onChange(values.map(({ value }) => value));
               }}
-              value={value}
             />
           )}
           rules={{
-            validate: (v) =>
-              v !== null && typeof v === "string" && v.trim() !== "",
+            validate: (v) => v && v.length !== 0,
           }}
         />
         <br />
-        {/* todo resolution shuld be a list*/}
         {errors.resolution && <span>{JSON.stringify(errors.resolution)}</span>}
-        <Controller
-          control={control}
-          defaultValue={null}
-          name="speciesId"
-          render={({ field: { onChange, value } }) => (
-            <SpeciesSelect
-              onChange={(val) => {
-                onChange(val.value);
+        {type === "PRODUCT" && (
+          <>
+            <Controller
+              control={control}
+              defaultValue={null}
+              name="speciesId"
+              render={({ field: { onChange, value } }) => (
+                <SpeciesSelect
+                  onChange={(val) => {
+                    onChange(val.value);
+                  }}
+                  value={value}
+                />
+              )}
+              rules={{
+                validate: (v) => {
+                  // todo move validators to common
+                  console.log(getValues().type);
+                  return (
+                    (v === null && getValues().type !== "PRODUCT") ||
+                    (getValues().type === "PRODUCT" &&
+                      typeof v === "string" &&
+                      v.trim() !== "")
+                  );
+                },
               }}
-              value={value}
             />
-          )}
-          rules={{
-            validate: (v) =>
-              // todo adapt validator with type
-              v === null || (typeof v === "string" && v.trim() !== ""),
-          }}
-        />
-        <br />
-        {errors.speciesId && <span>{JSON.stringify(errors.speciesId)}</span>}
-        <br />
-        <input
-          type="number"
-          {...register("refundAmount", {
-            validate: (v) => (v ? !Number.isNaN(v) : true),
-          })}
-          step="0.01"
-          min="0"
-        />
-        <br />
-        {errors.refundAmount && (
-          <span>{JSON.stringify(errors.refundAmount)}</span>
+            <br />
+            {errors.speciesId && (
+              <span>{JSON.stringify(errors.speciesId)}</span>
+            )}
+          </>
         )}
+        <br />
+        {resolution &&
+          resolution.some((_resolution: string) =>
+            ["PARTIAL_REFUND", "REFUND"].includes(_resolution)
+          ) && (
+            <>
+              <input
+                type="number"
+                {...register("refundAmount", {
+                  validate: (v) => (v ? !Number.isNaN(v) : true),
+                })}
+                step="0.01"
+                min="0"
+              />
+              <br />
+              {errors.refundAmount && (
+                <span>{JSON.stringify(errors.refundAmount)}</span>
+              )}
+            </>
+          )}
         <textarea {...register("comment")}></textarea>
         <br />
         {errors.comment && <span>{JSON.stringify(errors.comment)}</span>}

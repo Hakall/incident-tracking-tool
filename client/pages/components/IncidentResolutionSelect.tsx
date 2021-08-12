@@ -4,7 +4,6 @@ import { IncidentResolution } from "@itt/common";
 
 interface IncidentResolutionSelectProps {
   onChange: (val: any) => void;
-  value: string;
 }
 
 const options = Object.keys(IncidentResolution).map((key) => ({
@@ -14,22 +13,16 @@ const options = Object.keys(IncidentResolution).map((key) => ({
 
 const IncidentResolutionSelect = ({
   onChange,
-  value,
 }: IncidentResolutionSelectProps) => {
-  const selectedValue = React.useMemo(() => {
-    const optionValue = options.find((option) => option.value === value);
-    return optionValue ? optionValue : { value: "", label: "" };
-  }, [options, value]);
-
   return (
     <Select
       options={options}
+      isMulti
       className="basic-single"
       classNamePrefix="select"
       // isClearable={isClearable}
       onChange={onChange}
       isSearchable={true}
-      value={selectedValue}
     />
   );
 };

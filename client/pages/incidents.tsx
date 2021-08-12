@@ -13,6 +13,17 @@ interface IncidentsData {
   incidents: Incident[];
 }
 
+const getResolution = (resolution: IncidentResolution[]): string => {
+  return resolution
+    .map(
+      (_resolution) =>
+        IncidentResolution[
+          _resolution as unknown as keyof typeof IncidentResolution
+        ]
+    )
+    .join(" ");
+};
+
 function Incidents() {
   const [pagination, setPagination] = useState({ size: 25, page: 1 });
   const { data, loading, error } = useQuery<IncidentsData>(GET_INCIDENTS, {
@@ -37,10 +48,7 @@ function Incidents() {
           date: new Date(date).toLocaleDateString(),
           type: IncidentType[type as unknown as keyof typeof IncidentType],
           cause: IncidentCause[cause as unknown as keyof typeof IncidentCause],
-          resolution:
-            IncidentResolution[
-              resolution as unknown as keyof typeof IncidentResolution
-            ],
+          resolution: getResolution(resolution),
           refundAmount,
         })
       );

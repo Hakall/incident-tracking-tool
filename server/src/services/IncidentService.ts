@@ -24,7 +24,6 @@ class IncidentService {
       ...(species && { species }),
     } as Incident;
 
-    // todo change IncidentToCreate to Incident when validations are done
     return incidentInterface.insertIncident(incident);
   }
 }

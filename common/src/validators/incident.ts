@@ -51,8 +51,12 @@ const causesByType = (type: string) => {
   }
 };
 
-const isRefundAmountMandatory = (resolution: string): boolean => {
-  if (["PARTIAL_REFUND", "REFUND"].includes(resolution)) {
+const isRefundAmountMandatory = (resolution: string[]): boolean => {
+  if (
+    resolution.some((_resolution) =>
+      ["PARTIAL_REFUND", "REFUND"].includes(_resolution)
+    )
+  ) {
     return true;
   }
   return false;
@@ -68,9 +72,16 @@ const validateIncident = (incident: IncidentToCreate) => {
   }
 
   if (
-    !IncidentResolution[incident.resolution as keyof typeof IncidentResolution]
+    incident.resolution.some(
+      (resolution) =>
+        !IncidentResolution[resolution as keyof typeof IncidentResolution]
+    )
   ) {
-    throw new Error(`${incident.resolution} is not a valid IncidentResolution`);
+    const unvalid = incident.resolution.find(
+      (resolution) =>
+        !IncidentResolution[resolution as keyof typeof IncidentResolution]
+    );
+    throw new Error(`${unvalid} is not a valid IncidentResolution`);
   }
 
   if (!causesByType(incident.type)) {

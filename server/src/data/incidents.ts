@@ -21,10 +21,18 @@ const dates = [
 ];
 
 const incidentsPrototypes = [
-  { type: "DELIVERY", cause: "DELAY", resolution: "PHONE_CALL" },
-  { type: "DELIVERY", cause: "UNDELIVERED", resolution: "REFUND" },
-  { type: "RELAY_POINT", cause: "WRONG_ADDRESS", resolution: "PARTIAL_REFUND" },
-  { type: "CUSTOMER", cause: "DISSATISFACTION", resolution: "PARTIAL_REFUND" },
+  { type: "DELIVERY", cause: "DELAY", resolution: ["PHONE_CALL"] },
+  { type: "DELIVERY", cause: "UNDELIVERED", resolution: ["REFUND"] },
+  {
+    type: "RELAY_POINT",
+    cause: "WRONG_ADDRESS",
+    resolution: ["PARTIAL_REFUND"],
+  },
+  {
+    type: "CUSTOMER",
+    cause: "DISSATISFACTION",
+    resolution: ["PARTIAL_REFUND", "PHONE_CALL"],
+  },
 ];
 
 const getRandomMails = (): string[] => {
@@ -56,10 +64,9 @@ export const incidents = (
       date: dates[dateIndex],
       ...incidentsPrototypes[incidentPrototypeIndex],
       relayPoint: relayPoints[relayPointIndex],
-      ...((incidentsPrototypes[incidentPrototypeIndex].resolution ===
-        "PARTIAL_REFUND" ||
-        incidentsPrototypes[incidentPrototypeIndex].resolution ===
-          "REFUND") && {
+      ...(incidentsPrototypes[incidentPrototypeIndex].resolution.find(
+        (resolution) => ["PARTIAL_REFUND", "REFUND"]
+      ) && {
         refundAmount: Math.floor(Math.random() * 1000),
       }),
     } as Incident);

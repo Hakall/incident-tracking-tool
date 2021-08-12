@@ -56,7 +56,7 @@ function EmailsInput({ onChange, emails }: EmailsInputProps) {
         event.preventDefault();
     }
   };
-
+  // todo add search / autocomplete with used emails
   return (
     <CreatableSelect
       components={components}
