@@ -20,7 +20,7 @@ class IncidentInterface {
     return new Promise<Incident[]>((resolve, reject) => {
       db.incidents
         .find({})
-        .sort({ date: 1 })
+        .sort({ date: 1, emails: 1 })
         .skip((page - 1) * size)
         .limit(size)
         .exec((err: Error | null, docs: Incident[]) => {

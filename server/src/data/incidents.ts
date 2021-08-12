@@ -36,7 +36,7 @@ const getRandomMails = (): string[] => {
       mails.push(emails[mailIndex]);
     }
   }
-  return mails;
+  return mails.sort();
 };
 
 export const incidents = (

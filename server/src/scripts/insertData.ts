@@ -14,7 +14,7 @@ const insertData = async () => {
     await speciesInterface.insertSpeciesFromFileData();
   }
 
-  const incidents = await incidentInterface.getIncidents();
+  const incidents = await incidentInterface.getIncidents(1, 1);
   if (!incidents || !incidents.length) {
     await incidentInterface.insertIncidentsFromFileData();
   }

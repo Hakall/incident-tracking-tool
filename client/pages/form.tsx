@@ -32,7 +32,7 @@ function ITTForm() {
     try {
       await createIncident({
         variables: {
-          emails: incidentToCreate.emails,
+          emails: incidentToCreate.emails.sort(),
           date: incidentToCreate.date,
           relayPointId: incidentToCreate.relayPointId,
           type: incidentToCreate.type,
