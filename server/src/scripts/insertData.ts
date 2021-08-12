@@ -1,5 +1,8 @@
-import { relayPointInterface, speciesInterface } from "../interfaces";
-
+import {
+  incidentInterface,
+  relayPointInterface,
+  speciesInterface,
+} from "../interfaces";
 const insertData = async () => {
   const relayPoints = await relayPointInterface.getRelayPoints();
   if (!relayPoints || !relayPoints.length) {
@@ -11,7 +14,10 @@ const insertData = async () => {
     await speciesInterface.insertSpeciesFromFileData();
   }
 
-  //  todo add incidents for charts
+  const incidents = await incidentInterface.getIncidents();
+  if (!incidents || !incidents.length) {
+    await incidentInterface.insertIncidentsFromFileData();
+  }
 };
 
 export { insertData };

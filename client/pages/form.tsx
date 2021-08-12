@@ -1,5 +1,5 @@
+import React from "react";
 import { useMutation } from "@apollo/client";
-import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { CREATE_INCIDENT } from "../gql/Mutations";
 import { EmailsInput } from "./components/EmailsInput";

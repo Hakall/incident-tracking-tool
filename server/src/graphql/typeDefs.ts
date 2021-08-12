@@ -62,6 +62,11 @@ export const typeDefs = gql`
     comment: String
   }
 
+  input Pagination {
+    size: Int!
+    page: Int!
+  }
+
   type RelayPoint {
     _id: ID!
     name: String!
@@ -76,6 +81,7 @@ export const typeDefs = gql`
   type Query {
     relayPoints: [RelayPoint]
     species: [Species]
+    incidents(pagination: Pagination): [Incident]
   }
 
   type Mutation {

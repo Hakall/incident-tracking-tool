@@ -1,6 +1,5 @@
 import DataStore from "nedb";
 
-console.log(__dirname);
 const db = {
   relayPoints: new DataStore({
     filename: __dirname.replace("loaders", "data/relayPoints.db"),
