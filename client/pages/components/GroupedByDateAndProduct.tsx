@@ -2,6 +2,7 @@ import React from "react";
 import { useQuery } from "@apollo/client";
 import { INCIDENTS_BY_DATE_AND_PRODUCT } from "../../gql/Queries";
 import { Incident } from "@itt/common";
+import GroupByDateAndProduct from "./GroupByDateAndProduct";
 
 interface IncidentsData {
   incidentsByDateAndProduct: Incident[][];
@@ -51,11 +52,10 @@ const GroupedByDateAndProduct = () => {
           }
         );
         return (
-          <div key={group[0]._id}>
-            {groupData.name}
-            occurrences:{groupData.occurrences}
-            totalRefundedAmount:{groupData.totalRefundedAmount}
-          </div>
+          <GroupByDateAndProduct
+            key={`${groupData.date}${groupData.name}`}
+            group={{ ...groupData, incidents: group }}
+          />
         );
       })}
     </>
