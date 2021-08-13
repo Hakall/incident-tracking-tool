@@ -72,6 +72,7 @@ const validateIncident = (incident: IncidentToCreate) => {
   }
 
   if (
+    !incident.resolution.length ||
     incident.resolution.some(
       (resolution) =>
         !IncidentResolution[resolution as keyof typeof IncidentResolution]
@@ -103,9 +104,12 @@ const validateIncident = (incident: IncidentToCreate) => {
     );
   }
 
-  if (isRefundAmountMandatory(incident.resolution) && !incident.refundAmount) {
+  if (
+    isRefundAmountMandatory(incident.resolution) &&
+    (incident.refundAmount === undefined || incident.refundAmount < 0)
+  ) {
     throw new Error(
-      `RefundAmount was not specified for IncidentResolution ${incident.resolution}`
+      `Invalid value for RefundAmount for IncidentResolution ${incident.resolution}`
     );
   }
 };
