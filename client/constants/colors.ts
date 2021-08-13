@@ -1,13 +1,14 @@
 const causesColors: { [key: string]: string } = {
-  Fraicheur: "hsl(83, 70%, 50%)",
-  Sable: "hsl(63, 70%, 50%)",
-  Poids: "hsl(279, 70%, 50%)",
-  "Non vidé": "hsl(109, 70%, 50%)",
-  Découpe: "hsl(338, 70%, 50%)",
-  Diversité: "hsl(82, 70%, 50%)",
-  Vers: "hsl(145, 70%, 50%)",
-  Mortalité: "hsl(245, 70%, 50%)",
-  Manque: "hsl(45, 70%, 50%)",
+  Fraicheur: "#659DBD",
+  Sable: "#FBEEC1",
+  Poids: "#BC986A",
+  "Non vidé": "#DAAD86",
+  Découpe: "#FF1A75",
+  Diversité: "#3c4f7d",
+  Vers: "#8D8741",
+  Mortalité: "#8EE4AF",
+  Manque: "#5D5c61",
+  Inversion: "#bc80bd",
 };
 
 const getCauseColor = (cause: string): string => causesColors[cause];

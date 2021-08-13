@@ -9,9 +9,13 @@ import {
 } from "@itt/common";
 import { GET_INCIDENTS } from "../gql/Queries";
 import GroupedByDateAndProduct from "./components/GroupedByDateAndProduct";
+import { Pagination } from "@itt/common/src/models/pagination";
 
 interface IncidentsData {
-  incidents: Incident[];
+  incidents: {
+    pagination: Pagination;
+    incidents: Incident[];
+  };
 }
 
 const getResolution = (resolution: IncidentResolution[]): string => {
@@ -26,15 +30,15 @@ const getResolution = (resolution: IncidentResolution[]): string => {
 };
 
 function Incidents() {
-  const [pagination, setPagination] = useState({ size: 25, page: 1 });
+  const [pagination, setPagination] = useState({ size: 25, page: 30 });
   const { data, loading, error } = useQuery<IncidentsData>(GET_INCIDENTS, {
     variables: {
       pagination,
     },
   });
   const tableData = React.useMemo(() => {
-    if (data && data.incidents) {
-      return data.incidents.map(
+    if (data && data.incidents && data.incidents.incidents) {
+      return data.incidents.incidents.map(
         ({
           emails,
           relayPoint,
@@ -80,6 +84,10 @@ function Incidents() {
       columns,
       data: tableData,
     });
+
+  if (loading || !data) {
+    return <></>;
+  }
 
   const goNext = () => {
     setPagination({
@@ -137,9 +145,19 @@ function Incidents() {
       </table>
       <div>
         {/*add controle, improve pagination canPrev canNext etc...*/}
-        <button onClick={goPrev}>Previous</button>
-        <button onClick={goNext}>Next</button>
+        <button onClick={goPrev} disabled={pagination.page === 1}>
+          Previous
+        </button>
+        <button
+          onClick={goNext}
+          disabled={
+            pagination.page * pagination.size >= data.incidents.pagination.total
+          }
+        >
+          Next
+        </button>
       </div>
+      {/*  useMemo for not rerender groupeBy when incidents page goNext */}
       <GroupedByDateAndProduct></GroupedByDateAndProduct>
     </>
   );

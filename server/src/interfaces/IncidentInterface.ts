@@ -18,8 +18,19 @@ class IncidentInterface {
     });
   }
 
-  async getIncidents(size: number, page: number): Promise<Incident[]> {
-    return new Promise<Incident[]>((resolve, reject) => {
+  async getIncidents(
+    size: number,
+    page: number
+  ): Promise<{ incidents: Incident[]; pagination: any }> {
+    const counter = await new Promise<number>((resolve, reject) => {
+      db.incidents.count({}, (err: Error | null, count) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(count);
+      });
+    });
+    const incidents = await new Promise<Incident[]>((resolve, reject) => {
       db.incidents
         .find({})
         .sort({ date: 1, emails: 1 })
@@ -32,12 +43,37 @@ class IncidentInterface {
           resolve(docs);
         });
     });
+
+    return {
+      incidents,
+      pagination: {
+        total: counter,
+        page,
+        size,
+      },
+    };
   }
 
   async getIncidentsByDateAndProduct(
     size: number,
     page: number
-  ): Promise<Incident[][]> {
+  ): Promise<{ incidents: Incident[][]; pagination: any }> {
+    const counter = await new Promise<number>((resolve, reject) => {
+      db.incidents.count(
+        {
+          type: "PRODUCT",
+          refundAmount: { $exists: true },
+          species: { $exists: true },
+        },
+        (err: Error | null, count) => {
+          if (err) {
+            reject(err);
+          }
+          resolve(count);
+        }
+      );
+    });
+
     const incidents = await new Promise<Incident[]>((resolve, reject) => {
       db.incidents
         .find({
@@ -59,9 +95,12 @@ class IncidentInterface {
       (elem: Incident) => `${elem.species!._id}${elem.date}`
     );
 
-    return Object.keys(grouped)
-      .map((key) => grouped[key])
-      .slice((page - 1) * size, page * size);
+    return {
+      incidents: Object.keys(grouped)
+        .map((key) => grouped[key])
+        .slice((page - 1) * size, page * size),
+      pagination: { total: counter, page, size },
+    };
   }
 
   async insertIncidentsFromFileData(): Promise<Incident[]> {

@@ -73,7 +73,23 @@ export const typeDefs = gql`
     name: String!
   }
 
-  input Pagination {
+  type Pagination {
+    size: Int!
+    page: Int!
+    total: Int!
+  }
+
+  type Incidents {
+    incidents: [Incident]
+    pagination: Pagination
+  }
+
+  type IncidentsByDateAndProduct {
+    incidents: [[Incident]]
+    pagination: Pagination
+  }
+
+  input PaginationInput {
     size: Int!
     page: Int!
   }
@@ -86,8 +102,10 @@ export const typeDefs = gql`
   type Query {
     relayPoints: [RelayPoint]
     species: [Species]
-    incidents(pagination: Pagination): [Incident]
-    incidentsByDateAndProduct(pagination: Pagination): [[Incident]]
+    incidents(pagination: PaginationInput): Incidents
+    incidentsByDateAndProduct(
+      pagination: PaginationInput
+    ): IncidentsByDateAndProduct
     findSimilarIncident(incident: SimilarIncident): [Incident]
   }
 

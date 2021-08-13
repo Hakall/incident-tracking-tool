@@ -1,25 +1,32 @@
 import { gql } from "@apollo/client";
 
 const INCIDENTS_BY_DATE_AND_PRODUCT = gql`
-  query GetIncidentsByDateAndProduct($pagination: Pagination) {
+  query GetIncidentsByDateAndProduct($pagination: PaginationInput) {
     incidentsByDateAndProduct(pagination: $pagination) {
-      _id
-      date
-      emails
-      relayPoint {
-        _id
-        name
-        day
+      pagination {
+        size
+        page
+        total
       }
-      type
-      cause
-      resolution
-      species {
+      incidents {
         _id
-        name
+        date
+        emails
+        relayPoint {
+          _id
+          name
+          day
+        }
+        type
+        cause
+        resolution
+        species {
+          _id
+          name
+        }
+        refundAmount
+        comment
       }
-      refundAmount
-      comment
     }
   }
 `;

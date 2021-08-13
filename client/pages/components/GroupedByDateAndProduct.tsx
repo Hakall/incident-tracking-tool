@@ -3,9 +3,13 @@ import { useQuery } from "@apollo/client";
 import { INCIDENTS_BY_DATE_AND_PRODUCT } from "../../gql/Queries";
 import { Incident } from "@itt/common";
 import GroupByDateAndProduct from "./GroupByDateAndProduct";
+import { Pagination } from "@itt/common/src/models/pagination";
 
 interface IncidentsData {
-  incidentsByDateAndProduct: Incident[][];
+  incidentsByDateAndProduct: {
+    incidents: Incident[][];
+    pagination: Pagination;
+  };
 }
 
 const GroupedByDateAndProduct = () => {
@@ -22,13 +26,21 @@ const GroupedByDateAndProduct = () => {
   );
 
   const groups = React.useMemo(() => {
-    if (data && data.incidentsByDateAndProduct.length > 0) {
-      return data.incidentsByDateAndProduct;
+    if (
+      data &&
+      data.incidentsByDateAndProduct &&
+      data.incidentsByDateAndProduct.incidents.length > 0
+    ) {
+      return data.incidentsByDateAndProduct.incidents;
     }
     return [];
   }, [data]);
 
-  if (loading || !data || data.incidentsByDateAndProduct.length === 0) {
+  if (
+    loading ||
+    !data ||
+    data.incidentsByDateAndProduct.incidents.length === 0
+  ) {
     return <></>;
   }
   return (

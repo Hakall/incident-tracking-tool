@@ -1,10 +1,8 @@
 import { incidentInterface } from "../../interfaces";
+import { PaginationInput } from "@itt/common/src/models/pagination";
 
 interface IncidentsInput {
-  pagination: {
-    size: number;
-    page: number;
-  };
+  pagination: PaginationInput;
 }
 
 export const IncidentsResolver = (_: any, { pagination }: IncidentsInput) => {

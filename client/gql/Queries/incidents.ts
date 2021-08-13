@@ -1,25 +1,32 @@
 import { gql } from "@apollo/client";
 
 const GET_INCIDENTS = gql`
-  query GetIncidents($pagination: Pagination) {
+  query GetIncidents($pagination: PaginationInput) {
     incidents(pagination: $pagination) {
-      _id
-      date
-      emails
-      relayPoint {
-        _id
-        name
-        day
+      pagination {
+        size
+        page
+        total
       }
-      type
-      cause
-      resolution
-      species {
+      incidents {
         _id
-        name
+        date
+        emails
+        relayPoint {
+          _id
+          name
+          day
+        }
+        type
+        cause
+        resolution
+        species {
+          _id
+          name
+        }
+        refundAmount
+        comment
       }
-      refundAmount
-      comment
     }
   }
 `;

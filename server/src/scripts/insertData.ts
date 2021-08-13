@@ -15,7 +15,7 @@ const insertData = async () => {
   }
 
   const incidents = await incidentInterface.getIncidents(1, 1);
-  if (!incidents || !incidents.length) {
+  if (!incidents || !incidents.incidents.length) {
     await incidentInterface.insertIncidentsFromFileData();
   }
 };
