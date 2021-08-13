@@ -16,7 +16,7 @@ const IncidentTypeSelect = ({ onChange, value }: IncidentTypeSelectProps) => {
   const selectedValue = React.useMemo(() => {
     const optionValue = options.find((option) => option.value === value);
     return optionValue ? optionValue : { value: "", label: "" };
-  }, [options, value]);
+  }, [value]);
 
   return (
     <Select

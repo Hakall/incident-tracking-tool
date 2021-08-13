@@ -1,6 +1,6 @@
 import { shallow } from "enzyme";
 import React from "react";
-import { IncidentsList } from "../IncidentsList";
+import { IncidentsList } from "../components/IncidentsList";
 import { IncidentCause, IncidentResolution, IncidentType } from "@itt/common";
 
 const incident = {

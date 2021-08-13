@@ -1,7 +1,7 @@
 import React from "react";
 import Select from "react-select";
 import { useQuery } from "@apollo/client";
-import { GET_SPECIES } from "../../gql/Queries";
+import { GET_SPECIES } from "../gql/Queries";
 import { Species } from "@itt/common";
 
 interface SpeciesSelectProps {

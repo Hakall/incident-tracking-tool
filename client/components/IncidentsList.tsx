@@ -4,8 +4,6 @@ import {
   IncidentCause,
   IncidentResolution,
   IncidentType,
-  RelayPoint,
-  Species,
 } from "@itt/common";
 import { Column, useTable } from "react-table";
 
@@ -92,34 +90,35 @@ const IncidentsList = (props: IncidentsListProps) => {
   return (
     <table {...getTableProps()}>
       <thead>
-        {
-          // Loop over the header rows
-          headerGroups.map((headerGroup) => (
-            // Apply the header row props
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {
-                // Loop over the headers in each row
-                headerGroup.headers.map((column) => (
-                  // Apply the header cell props
-                  <th {...column.getHeaderProps()}>
-                    {
-                      // Render the header
-                      column.render("Header")
-                    }
+        {headerGroups.map((headerGroup) => {
+          const { key, ...headerProps } = headerGroup.getHeaderGroupProps();
+          return (
+            <tr key={key} {...headerProps}>
+              {headerGroup.headers.map((column) => {
+                const { key, ...headerProps } = column.getHeaderProps();
+                return (
+                  <th key={key} {...headerProps}>
+                    {column.render("Header")}
                   </th>
-                ))
-              }
+                );
+              })}
             </tr>
-          ))
-        }
+          );
+        })}
       </thead>
       <tbody {...getTableBodyProps()}>
         {rows.map((row) => {
           prepareRow(row);
+          const { key, ...rowProps } = row.getRowProps();
           return (
-            <tr {...row.getRowProps()}>
+            <tr key={key} {...rowProps}>
               {row.cells.map((cell) => {
-                return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
+                const { key, ...cellProps } = cell.getCellProps();
+                return (
+                  <td key={key} {...cellProps}>
+                    {cell.render("Cell")}
+                  </td>
+                );
               })}
             </tr>
           );

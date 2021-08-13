@@ -5,12 +5,12 @@ const withTM = require("next-transpile-modules")(["@itt/common"]);
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 
 const nextConfig = {
-  webpack: function (config) {
+  webpack: function (config, { webpack }) {
     config.resolve.plugins = [
       ...config.resolve.plugins,
       new TsconfigPathsPlugin(),
     ];
-
+    config.plugins.push(new webpack.IgnorePlugin(/\/__tests__\//));
     return config;
   },
   reactStrictMode: true,

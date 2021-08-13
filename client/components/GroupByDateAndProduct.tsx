@@ -1,7 +1,7 @@
 import React from "react";
 import { ResponsiveBar, Bar } from "@nivo/bar";
 import { Incident, IncidentCause } from "@itt/common";
-import { causesColors, getCauseColor } from "../../constants/colors";
+import { causesColors, getCauseColor } from "../constants/colors";
 
 interface GroupByDateAndProductProps {
   group: {
@@ -35,7 +35,7 @@ const GroupByDateAndProduct = (props: GroupByDateAndProductProps) => {
         ...cause,
       },
     ];
-  }, [incidents]);
+  }, [incidents, name, date]);
   return (
     <div>
       {name}

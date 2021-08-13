@@ -8,9 +8,9 @@ import {
   IncidentType,
 } from "@itt/common";
 import { GET_INCIDENTS } from "../gql/Queries";
-import GroupedByDateAndProduct from "./components/GroupedByDateAndProduct";
+import GroupedByDateAndProduct from "../components/GroupedByDateAndProduct";
 import { Pagination } from "@itt/common/src/models/pagination";
-import { IncidentsList } from "./components/IncidentsList";
+import { IncidentsList } from "../components/IncidentsList";
 
 interface IncidentsData {
   incidents: {

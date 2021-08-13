@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client";
-import { FIND_SIMILAR_INCIDENT } from "../../gql/Queries";
+import { FIND_SIMILAR_INCIDENT } from "../gql/Queries";
 import { Incident } from "@itt/common";
 
 interface SimilarIncidentProps {
