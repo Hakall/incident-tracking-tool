@@ -54,8 +54,10 @@ const IncidentResolutionSelect = ({
       options={options}
       onKeyDown={(e) => {
         switch (e.key) {
-          case "Enter":
           case "Tab": {
+            e.preventDefault();
+          }
+          case "Enter": {
             if (!inputValue || inputValue.trim() === "") {
               timeOut = setTimeout(() => {
                 focusNext(isRefundMandatory ? "refundAmount" : "comment");

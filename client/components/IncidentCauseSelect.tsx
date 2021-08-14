@@ -37,7 +37,15 @@ const IncidentCauseSelect = ({
       options={options}
       className="basic-single"
       classNamePrefix="select"
-      // isClearable={isClearable}
+      onKeyDown={(e) => {
+        switch (e.key) {
+          case "Tab": {
+            if (!selectedValue.value || selectedValue.value.trim() === "") {
+              e.preventDefault();
+            }
+          }
+        }
+      }}
       onChange={onChange}
       isSearchable={true}
       value={selectedValue}

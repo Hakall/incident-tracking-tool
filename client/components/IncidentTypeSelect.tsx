@@ -30,6 +30,15 @@ const IncidentTypeSelect = ({
       isDisabled={isDisabled}
       ref={selectRef}
       options={options}
+      onKeyDown={(e) => {
+        switch (e.key) {
+          case "Tab": {
+            if (!selectedValue.value || selectedValue.value.trim() === "") {
+              e.preventDefault();
+            }
+          }
+        }
+      }}
       className="basic-single"
       classNamePrefix="select"
       // isClearable={isClearable}
