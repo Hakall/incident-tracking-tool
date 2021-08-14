@@ -32,10 +32,7 @@ const IncidentResolutionSelect = ({
     setInputValue(value.trim());
   };
 
-  const handleChange = (
-    values: OptionsType<OptionTypeBase>,
-    actionMeta: ActionMeta<OptionTypeBase>
-  ) => {
+  const handleChange = (values: OptionsType<OptionTypeBase>) => {
     onChange(values.map(({ value }) => value));
     clearTimeout(timeOut);
   };
@@ -50,7 +47,6 @@ const IncidentResolutionSelect = ({
       )
       .filter((_resolution) => _resolution);
   }, [options, resolution]);
-
   return (
     <Select
       isDisabled={isDisabled}

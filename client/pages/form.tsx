@@ -358,7 +358,11 @@ function ITTForm() {
               focusNext={focusNext}
               selectRef={resolutionRef}
               onChange={(...args) => {
-                onChange(args);
+                if (args.length) {
+                  onChange(args[0]);
+                } else {
+                  onChange([]);
+                }
                 trigger("refundAmount");
               }}
               resolution={value}
