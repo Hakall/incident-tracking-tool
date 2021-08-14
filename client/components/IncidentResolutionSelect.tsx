@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Select, { OptionsType } from "react-select";
+import Select, { ActionMeta, OptionsType, OptionTypeBase } from "react-select";
 import { IncidentResolution } from "@itt/common";
 
 interface IncidentResolutionSelectProps {
@@ -33,11 +33,23 @@ const IncidentResolutionSelect = ({
   };
 
   const handleChange = (
-    values: OptionsType<{ value: string; label: IncidentResolution }>
+    values: OptionsType<OptionTypeBase>,
+    actionMeta: ActionMeta<OptionTypeBase>
   ) => {
     onChange(values.map(({ value }) => value));
     clearTimeout(timeOut);
   };
+
+  const selectedValue = React.useMemo(() => {
+    if (!resolution) {
+      return [];
+    }
+    return resolution
+      .map((_resolution) =>
+        options.find((option) => option.value === _resolution)
+      )
+      .filter((_resolution) => _resolution);
+  }, [options, resolution]);
 
   return (
     <Select
@@ -62,6 +74,7 @@ const IncidentResolutionSelect = ({
       classNamePrefix="select"
       onChange={handleChange}
       isSearchable={true}
+      value={selectedValue}
     />
   );
 };

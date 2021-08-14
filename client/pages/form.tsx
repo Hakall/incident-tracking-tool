@@ -33,7 +33,7 @@ function ITTForm() {
   });
   const { ref: commentRefRegister, ...commentRegister } = register("comment");
   const { ref: amountRefRegister, ...amountRegister } = register(
-    "refundAMount",
+    "refundAmount",
     {
       validate: (v) =>
         resolution &&
@@ -51,6 +51,7 @@ function ITTForm() {
   const speciesRef = useRef<any>(null);
   const refundAmountRef = useRef<any>(null);
   const commentRef = useRef<any>(null);
+  const submitRef = useRef<any>(null);
 
   const focusNext = React.useCallback(
     (name: string) => {
@@ -72,6 +73,8 @@ function ITTForm() {
         relayPointRef.current.select.focus();
       } else if (name === "emails" && emailsRef.current) {
         emailsRef.current.select.focus();
+      } else if (name === "submit" && submitRef.current) {
+        submitRef.current.focus();
       }
     },
     [
@@ -84,8 +87,34 @@ function ITTForm() {
       typeRef.current,
       relayPointRef.current,
       emailsRef.current,
+      submitRef.current,
     ]
   );
+
+  const [
+    type,
+    cause,
+    resolution,
+    relayPointId,
+    emails,
+    date,
+    refundAmount,
+    comment,
+  ] = watch([
+    "type",
+    "cause",
+    "resolution",
+    "relayPointId",
+    "emails",
+    "date",
+    "refundAmount",
+    "comment",
+  ]);
+
+  const { data } = useQuery<SimilarIncidentData>(FIND_SIMILAR_INCIDENT, {
+    variables: { incident: { emails, date } },
+    skip: !emails || emails.length < 1 || !date,
+  });
 
   const populateFormFromIncident = (incident: Incident) => {
     clearErrors();
@@ -97,22 +126,6 @@ function ITTForm() {
     setValue("comment", incident.comment);
     setValue("speciesId", incident.species?._id);
   };
-
-  const [type, cause, resolution, relayPointId, emails, date, refundAmount] =
-    watch([
-      "type",
-      "cause",
-      "resolution",
-      "relayPointId",
-      "emails",
-      "date",
-      "refundAmount",
-    ]);
-
-  const { data } = useQuery<SimilarIncidentData>(FIND_SIMILAR_INCIDENT, {
-    variables: { incident: { emails, date } },
-    skip: !emails || emails.length < 1 || !date,
-  });
 
   React.useEffect(() => {
     if (
@@ -141,7 +154,6 @@ function ITTForm() {
   }, [type]);
 
   const resetForm = () => {
-    console.log("resetForm");
     reset({
       emails: [],
       date,
@@ -153,14 +165,13 @@ function ITTForm() {
 
   const checkSubmit = (e: any) => {
     e.preventDefault();
-    if (touchedFields.comment) {
+    if (touchedFields.comment || (comment && comment.trim() !== "")) {
       handleSubmit(onSubmit)(e);
     } else {
       focusNext("comment");
     }
   };
   const onSubmit = async () => {
-    console.log("onSubmit");
     const incidentToCreate = getValues();
 
     try {
@@ -186,6 +197,10 @@ function ITTForm() {
             incidentToCreate.comment !== "" && {
               comment: incidentToCreate.comment,
             }),
+        },
+        update(cache) {
+          cache.evict({ fieldName: "findSimilarIncident" });
+          cache.gc();
         },
       });
     } catch (e) {}
@@ -342,8 +357,8 @@ function ITTForm() {
               isRefundMandatory={isRefundMandatory}
               focusNext={focusNext}
               selectRef={resolutionRef}
-              onChange={(v) => {
-                onChange(v);
+              onChange={(...args) => {
+                onChange(args);
                 trigger("refundAmount");
               }}
               resolution={value}
@@ -371,6 +386,7 @@ function ITTForm() {
             }
             trigger("refundAmount");
           }}
+          onChange={(v) => setValue("refundAmount", v.target.value)}
           step="0.01"
           min="0"
         />
@@ -378,8 +394,21 @@ function ITTForm() {
           disabled={!resolution || resolution.length === 0}
           ref={commentRef}
           {...commentRegister}
+          onKeyDown={(e) => {
+            switch (e.key) {
+              case "Enter":
+              case "Tab": {
+                if (!comment || comment.trim() === "") {
+                  focusNext("submit");
+                  e.preventDefault();
+                }
+              }
+            }
+          }}
+          onChange={(v) => setValue("comment", v.target.value)}
+          value={comment || ""}
         ></textarea>
-        <button type="submit" disabled={!isDirty || !isValid}>
+        <button ref={submitRef} type="submit" disabled={!isDirty || !isValid}>
           Submit
         </button>
       </form>
