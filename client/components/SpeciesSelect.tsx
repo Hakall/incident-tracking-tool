@@ -5,10 +5,10 @@ import { GET_SPECIES } from "../gql/Queries";
 import { Species } from "@itt/common";
 
 interface SpeciesSelectProps {
-  focusNext: () => void;
   selectRef: any;
   onChange: (val: any) => void;
   value: string;
+  isDisabled: boolean;
 }
 
 interface SpeciesData {
@@ -19,7 +19,7 @@ const SpeciesSelect = ({
   onChange,
   value,
   selectRef,
-  focusNext,
+  isDisabled,
 }: SpeciesSelectProps) => {
   const { data, loading, error } = useQuery<SpeciesData>(GET_SPECIES);
 
@@ -39,6 +39,7 @@ const SpeciesSelect = ({
 
   return (
     <Select
+      isDisabled={isDisabled}
       ref={selectRef}
       options={options}
       className="basic-single"

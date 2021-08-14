@@ -21,7 +21,7 @@ function ITTForm() {
     setValue,
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isDirty, isValid },
     getValues,
   } = useForm();
 
@@ -120,9 +120,19 @@ function ITTForm() {
     name: "type",
   });
 
+  const cause = useWatch({
+    control,
+    name: "cause",
+  });
+
   const resolution = useWatch({
     control,
     name: "resolution",
+  });
+
+  const relayPointId = useWatch({
+    control,
+    name: "relayPointId",
   });
 
   const emails = useWatch({
@@ -183,6 +193,7 @@ function ITTForm() {
 
   return (
     <>
+      {/*split controllers to components*/}
       <form onSubmit={handleSubmit(onSubmit)}>
         <Controller
           defaultValue={[]}
@@ -209,6 +220,7 @@ function ITTForm() {
         {/* todo default date this day, maybe from previous incident for same mail*/}
         <input
           type="date"
+          disabled={!emails || (emails && emails.length === 0)}
           ref={(e) => {
             dateRef.current = e;
           }}
@@ -235,9 +247,10 @@ function ITTForm() {
           name="relayPointId"
           render={({ field: { onChange, value } }) => (
             <RelayPointsSelect
-              focusNext={focusType}
+              isDisabled={!date}
               selectRef={relayPointRef}
               onChange={(val) => {
+                setTimeout(focusType, 100);
                 onChange(val.value);
               }}
               value={value}
@@ -259,11 +272,16 @@ function ITTForm() {
           name="type"
           render={({ field: { onChange, value } }) => (
             <IncidentTypeSelect
-              focusNext={focusCause}
+              isDisabled={!relayPointId}
               selectRef={typeRef}
               onChange={(val) => {
                 onChange(val.value);
                 setValue("cause", null);
+                if (val.value === "PRODUCT") {
+                  setTimeout(focusSpecies, 100);
+                } else {
+                  setTimeout(focusCause, 100);
+                }
               }}
               value={value}
             />
@@ -276,48 +294,6 @@ function ITTForm() {
         <br />
         {errors.type && <span>{JSON.stringify(errors.type)}</span>}
         {/* todo focus conditionnel */}
-        <Controller
-          control={control}
-          defaultValue={null}
-          name="cause"
-          render={({ field: { onChange, value } }) => (
-            <IncidentCauseSelect
-              focusNext={focusResolution}
-              selectRef={causeRef}
-              onChange={(val) => {
-                onChange(val.value);
-              }}
-              value={value}
-              type={type}
-            />
-          )}
-          rules={{
-            validate: (v) =>
-              v !== null && typeof v === "string" && v.trim() !== "",
-          }}
-        />
-        <br />
-        {errors.cause && <span>{JSON.stringify(errors.cause)}</span>}
-        {/* todo focus conditionnel */}
-        <Controller
-          control={control}
-          defaultValue={null}
-          name="resolution"
-          render={({ field: { onChange, value } }) => (
-            <IncidentResolutionSelect
-              focusNext={focusComment}
-              selectRef={resolutionRef}
-              onChange={(values: { value: string }[]) => {
-                onChange(values.map(({ value }) => value));
-              }}
-            />
-          )}
-          rules={{
-            validate: (v) => v && v.length !== 0,
-          }}
-        />
-        <br />
-        {errors.resolution && <span>{JSON.stringify(errors.resolution)}</span>}
         {type === "PRODUCT" && (
           <>
             <Controller
@@ -326,10 +302,11 @@ function ITTForm() {
               name="speciesId"
               render={({ field: { onChange, value } }) => (
                 <SpeciesSelect
-                  focusNext={focusResolution}
+                  isDisabled={!type}
                   selectRef={speciesRef}
                   onChange={(val) => {
                     onChange(val.value);
+                    setTimeout(focusCause, 100);
                   }}
                   value={value}
                 />
@@ -348,6 +325,49 @@ function ITTForm() {
             )}
           </>
         )}
+        <Controller
+          control={control}
+          defaultValue={null}
+          name="cause"
+          render={({ field: { onChange, value } }) => (
+            <IncidentCauseSelect
+              isDisabled={!type}
+              selectRef={causeRef}
+              onChange={(val) => {
+                onChange(val.value);
+                setTimeout(focusResolution, 100);
+              }}
+              value={value}
+              type={type}
+            />
+          )}
+          rules={{
+            validate: (v) =>
+              v !== null && typeof v === "string" && v.trim() !== "",
+          }}
+        />
+        <br />
+        {errors.cause && <span>{JSON.stringify(errors.cause)}</span>}
+        <Controller
+          control={control}
+          defaultValue={null}
+          name="resolution"
+          render={({ field: { onChange, value } }) => (
+            <IncidentResolutionSelect
+              isDisabled={!cause}
+              focusNext={focusComment}
+              selectRef={resolutionRef}
+              onChange={onChange}
+              resolution={value}
+            />
+          )}
+          rules={{
+            validate: (v) => v && v.length !== 0,
+          }}
+        />
+        <br />
+        {errors.resolution && <span>{JSON.stringify(errors.resolution)}</span>}
+        {/* todo focus conditionnel */}
         <br />
         {resolution &&
           resolution.some((_resolution: string) =>
@@ -368,11 +388,16 @@ function ITTForm() {
               )}
             </>
           )}
-        <textarea {...register("comment")}></textarea>
+        <textarea
+          disabled={!resolution || resolution.length === 0}
+          {...register("comment")}
+        ></textarea>
         <br />
         {errors.comment && <span>{JSON.stringify(errors.comment)}</span>}
         <br />
-        <button type="submit">Submit</button>
+        <button type="submit" disabled={true || !isDirty || !isValid}>
+          Submit
+        </button>
       </form>
       {/*{emails && date && (*/}
       {/*  <SimilarIncident*/}

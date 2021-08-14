@@ -4,11 +4,11 @@ import { IncidentCause } from "@itt/common";
 import { causesByType } from "@itt/common/src/validators";
 
 interface IncidentCauseSelectProps {
-  focusNext: () => void;
   selectRef: any;
   onChange: (val: any) => void;
   value: string;
   type: string;
+  isDisabled: boolean;
 }
 
 const IncidentCauseSelect = ({
@@ -16,7 +16,7 @@ const IncidentCauseSelect = ({
   value,
   type,
   selectRef,
-  focusNext,
+  isDisabled,
 }: IncidentCauseSelectProps) => {
   const options = React.useMemo(() => {
     return causesByType(type).map((key) => ({
@@ -32,6 +32,7 @@ const IncidentCauseSelect = ({
 
   return (
     <Select
+      isDisabled={isDisabled}
       ref={selectRef}
       options={options}
       className="basic-single"

@@ -5,10 +5,10 @@ import { GET_RELAY_POINTS } from "../gql/Queries";
 import { RelayPoint } from "@itt/common";
 
 interface RelayPointsSelectProps {
-  focusNext: () => void;
   selectRef: any;
   onChange: (val: any) => void;
   value: string;
+  isDisabled: boolean;
 }
 
 interface RelayPointsData {
@@ -18,8 +18,8 @@ interface RelayPointsData {
 const RelayPointsSelect = ({
   onChange,
   value,
-  focusNext,
   selectRef,
+  isDisabled,
 }: RelayPointsSelectProps) => {
   const { data, loading, error } = useQuery<RelayPointsData>(GET_RELAY_POINTS);
 
@@ -39,6 +39,7 @@ const RelayPointsSelect = ({
 
   return (
     <Select
+      isDisabled={isDisabled}
       ref={selectRef}
       options={options}
       className="basic-single"
