@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import Select from "react-select";
+import Select, { OptionsType } from "react-select";
 import { IncidentResolution } from "@itt/common";
 
 interface IncidentResolutionSelectProps {
-  focusNext: () => void;
+  focusNext: (name: string) => void;
   selectRef: any;
   onChange: (val: any) => void;
   resolution: string[];
   isDisabled: boolean;
+  isRefundMandatory: boolean;
 }
 
 const options = Object.keys(IncidentResolution).map((key) => ({
@@ -21,19 +22,21 @@ const IncidentResolutionSelect = ({
   focusNext,
   resolution,
   isDisabled,
+  isRefundMandatory,
 }: IncidentResolutionSelectProps) => {
   const [inputValue, setInputValue] = useState("");
 
+  let timeOut: any;
+
   const handleInputChange = (value: string) => {
-    console.log("inputValue.trim()", inputValue.trim());
-    setInputValue(inputValue.trim());
+    setInputValue(value.trim());
   };
 
-  const handleChange = (values: any, actionMeta: any) => {
-    console.log("handleChange values", values);
-    console.log("actionMeta", actionMeta);
-    console.log("inputValue.trim()", inputValue.trim());
+  const handleChange = (
+    values: OptionsType<{ value: string; label: IncidentResolution }>
+  ) => {
     onChange(values.map(({ value }) => value));
+    clearTimeout(timeOut);
   };
 
   return (
@@ -45,13 +48,11 @@ const IncidentResolutionSelect = ({
         switch (e.key) {
           case "Enter":
           case "Tab": {
-            console.log("onKeyDown");
-            console.log("e", e);
-            console.log("inputValue", inputValue);
-            console.log("resolution", resolution);
-            // focusNext();
-            //
-            // e.preventDefault();
+            if (!inputValue || inputValue.trim() === "") {
+              timeOut = setTimeout(() => {
+                focusNext(isRefundMandatory ? "refundAmount" : "comment");
+              }, 100);
+            }
           }
         }
       }}

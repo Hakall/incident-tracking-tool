@@ -7,7 +7,7 @@ const components = {
 };
 
 interface EmailsInputProps {
-  focusNext: () => void;
+  focusNext: (date: string) => void;
   selectRef: any;
   onChange: (val: any) => void;
   emails: string[];
@@ -69,7 +69,7 @@ function EmailsInput({
         ) {
           return;
         }
-        focusNext();
+        focusNext("date");
       }
     }
   };

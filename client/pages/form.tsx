@@ -21,76 +21,71 @@ function ITTForm() {
     setValue,
     handleSubmit,
     control,
-    formState: { errors, isDirty, isValid },
+    formState: { errors, isDirty, isValid, touchedFields },
     getValues,
+    trigger,
+    watch,
+    reset,
   } = useForm();
 
-  const { ref, ...dateRegister } = register("date", {
+  const { ref: dateRefRegister, ...dateRegister } = register("date", {
     validate: (v) => (v ? !Number.isNaN(new Date(v).getTime()) : true),
   });
+  const { ref: commentRefRegister, ...commentRegister } = register("comment");
+  const { ref: amountRefRegister, ...amountRegister } = register(
+    "refundAMount",
+    {
+      validate: (v) =>
+        resolution &&
+        ((isRefundMandatory && !Number.isNaN(v) && Number(v) > 0) ||
+          !isRefundMandatory),
+    }
+  );
 
   const emailsRef = useRef<any>(null);
-  const focusEmails = React.useCallback(() => {
-    if (emailsRef.current) {
-      emailsRef.current.select.focus();
-    }
-  }, [emailsRef.current]);
-
   const dateRef = useRef<any>(null);
-  const focusDate = React.useCallback(() => {
-    if (dateRef.current) {
-      dateRef.current.focus();
-    }
-  }, [dateRef.current]);
-
   const relayPointRef = useRef<any>(null);
-  const focusRelayPoint = React.useCallback(() => {
-    if (relayPointRef.current) {
-      relayPointRef.current.select.focus();
-    }
-  }, [relayPointRef.current]);
-
   const typeRef = useRef<any>(null);
-  const focusType = React.useCallback(() => {
-    if (typeRef.current) {
-      typeRef.current.select.focus();
-    }
-  }, [typeRef.current]);
-
   const causeRef = useRef<any>(null);
-  const focusCause = React.useCallback(() => {
-    if (causeRef.current) {
-      causeRef.current.select.focus();
-    }
-  }, [causeRef.current]);
-
   const resolutionRef = useRef<any>(null);
-  const focusResolution = React.useCallback(() => {
-    if (resolutionRef.current) {
-      resolutionRef.current.select.focus();
-    }
-  }, [resolutionRef.current]);
-
   const speciesRef = useRef<any>(null);
-  const focusSpecies = React.useCallback(() => {
-    if (speciesRef.current) {
-      speciesRef.current.select.focus();
-    }
-  }, [speciesRef.current]);
-
-  const refondAmountRef = useRef<any>(null);
-  const focusRefundAmount = React.useCallback(() => {
-    if (refondAmountRef.current) {
-      refondAmountRef.current.select.focus();
-    }
-  }, [refondAmountRef.current]);
-
+  const refundAmountRef = useRef<any>(null);
   const commentRef = useRef<any>(null);
-  const focusComment = React.useCallback(() => {
-    if (commentRef.current) {
-      commentRef.current.select.focus();
-    }
-  }, [commentRef.current]);
+
+  const focusNext = React.useCallback(
+    (name: string) => {
+      if (name === "date" && dateRef.current) {
+        dateRef.current.focus();
+      } else if (name === "refundAmount" && refundAmountRef.current) {
+        refundAmountRef.current.focus();
+      } else if (name === "comment" && commentRef.current) {
+        commentRef.current.focus();
+      } else if (name === "species" && speciesRef.current) {
+        speciesRef.current.select.focus();
+      } else if (name === "resolution" && resolutionRef.current) {
+        resolutionRef.current.select.focus();
+      } else if (name === "cause" && causeRef.current) {
+        causeRef.current.select.focus();
+      } else if (name === "type" && typeRef.current) {
+        typeRef.current.select.focus();
+      } else if (name === "relayPoint" && relayPointRef.current) {
+        relayPointRef.current.select.focus();
+      } else if (name === "emails" && emailsRef.current) {
+        emailsRef.current.select.focus();
+      }
+    },
+    [
+      dateRef.current,
+      refundAmountRef.current,
+      commentRef.current,
+      speciesRef.current,
+      resolutionRef.current,
+      causeRef.current,
+      typeRef.current,
+      relayPointRef.current,
+      emailsRef.current,
+    ]
+  );
 
   const populateFormFromIncident = (incident: Incident) => {
     clearErrors();
@@ -103,47 +98,16 @@ function ITTForm() {
     setValue("speciesId", incident.species?._id);
   };
 
-  const resetForm = () => {
-    setValue("emails", []);
-    setValue("date", null);
-    setValue("relayPointId", null);
-    setValue("type", null);
-    setValue("cause", null);
-    setValue("resolution", []);
-    setValue("refundAmount", null);
-    setValue("comment", null);
-    setValue("speciesId", null);
-  };
-
-  const type = useWatch({
-    control,
-    name: "type",
-  });
-
-  const cause = useWatch({
-    control,
-    name: "cause",
-  });
-
-  const resolution = useWatch({
-    control,
-    name: "resolution",
-  });
-
-  const relayPointId = useWatch({
-    control,
-    name: "relayPointId",
-  });
-
-  const emails = useWatch({
-    control,
-    name: "emails",
-  });
-
-  const date = useWatch({
-    control,
-    name: "date",
-  });
+  const [type, cause, resolution, relayPointId, emails, date, refundAmount] =
+    watch([
+      "type",
+      "cause",
+      "resolution",
+      "relayPointId",
+      "emails",
+      "date",
+      "refundAmount",
+    ]);
 
   const { data } = useQuery<SimilarIncidentData>(FIND_SIMILAR_INCIDENT, {
     variables: { incident: { emails, date } },
@@ -160,7 +124,43 @@ function ITTForm() {
     }
   }, [data]);
 
+  const isRefundMandatory = React.useMemo(() => {
+    if (!resolution) {
+      return false;
+    }
+    return resolution.some((_resolution: string) =>
+      ["PARTIAL_REFUND", "REFUND"].includes(_resolution)
+    );
+  }, [resolution]);
+
+  const isSpeciesMandatory = React.useMemo(() => {
+    if (!type) {
+      return false;
+    }
+    return type === "PRODUCT";
+  }, [type]);
+
+  const resetForm = () => {
+    console.log("resetForm");
+    reset({
+      emails: [],
+      date,
+    });
+    setValue("emails", []);
+    setValue("resolution", []);
+    clearErrors();
+  };
+
+  const checkSubmit = (e: any) => {
+    e.preventDefault();
+    if (touchedFields.comment) {
+      handleSubmit(onSubmit)(e);
+    } else {
+      focusNext("comment");
+    }
+  };
   const onSubmit = async () => {
+    console.log("onSubmit");
     const incidentToCreate = getValues();
 
     try {
@@ -172,11 +172,13 @@ function ITTForm() {
           type: incidentToCreate.type,
           cause: incidentToCreate.cause,
           resolution: incidentToCreate.resolution,
-          ...(incidentToCreate.refundAmount &&
+          ...(isRefundMandatory &&
+            incidentToCreate.refundAmount &&
             incidentToCreate.refundAmount !== "" && {
               refundAmount: Number(incidentToCreate.refundAmount),
             }),
-          ...(incidentToCreate.speciesId &&
+          ...(isSpeciesMandatory &&
+            incidentToCreate.speciesId &&
             incidentToCreate.speciesId !== "" && {
               speciesId: incidentToCreate.speciesId,
             }),
@@ -193,15 +195,15 @@ function ITTForm() {
 
   return (
     <>
-      {/*split controllers to components*/}
-      <form onSubmit={handleSubmit(onSubmit)}>
+      {/* todo split controllers to components*/}
+      <form onSubmit={checkSubmit}>
         <Controller
           defaultValue={[]}
           control={control}
           name="emails"
           render={({ field: { onChange, value } }) => (
             <EmailsInput
-              focusNext={focusDate}
+              focusNext={focusNext}
               selectRef={emailsRef}
               emails={value}
               onChange={(val) => {
@@ -214,8 +216,6 @@ function ITTForm() {
               v && v.length !== 0 && !v.some((mail) => !mail.match(mailRegex)),
           }}
         />
-        <br />
-        {errors.emails && <span>{JSON.stringify(errors.emails)}</span>}
         <br />
         {/* todo default date this day, maybe from previous incident for same mail*/}
         <input
@@ -230,17 +230,15 @@ function ITTForm() {
               case "Enter":
               case "Tab": {
                 if (date) {
-                  focusRelayPoint();
+                  focusNext("relayPoint");
                   e.preventDefault();
                 }
               }
             }
           }}
+          onChange={(v) => setValue("date", v.target.value)}
           required
         />
-        <br />
-        {errors.date && <span>{`${errors.date}`}</span>}
-        <br />
         <Controller
           control={control}
           defaultValue={null}
@@ -250,7 +248,7 @@ function ITTForm() {
               isDisabled={!date}
               selectRef={relayPointRef}
               onChange={(val) => {
-                setTimeout(focusType, 100);
+                setTimeout(() => focusNext("type"), 100);
                 onChange(val.value);
               }}
               value={value}
@@ -261,11 +259,6 @@ function ITTForm() {
               v !== null && typeof v === "string" && v.trim() !== "",
           }}
         />
-        <br />
-        {errors.relayPointId && (
-          <span>{JSON.stringify(errors.relayPointId)}</span>
-        )}
-        <br />
         <Controller
           control={control}
           defaultValue={null}
@@ -278,9 +271,9 @@ function ITTForm() {
                 onChange(val.value);
                 setValue("cause", null);
                 if (val.value === "PRODUCT") {
-                  setTimeout(focusSpecies, 100);
+                  setTimeout(() => focusNext("species"), 100);
                 } else {
-                  setTimeout(focusCause, 100);
+                  setTimeout(() => focusNext("cause"), 100);
                 }
               }}
               value={value}
@@ -293,37 +286,30 @@ function ITTForm() {
         />
         <br />
         {errors.type && <span>{JSON.stringify(errors.type)}</span>}
-        {/* todo focus conditionnel */}
-        {type === "PRODUCT" && (
-          <>
-            <Controller
-              control={control}
-              defaultValue={null}
-              name="speciesId"
-              render={({ field: { onChange, value } }) => (
-                <SpeciesSelect
-                  isDisabled={!type}
-                  selectRef={speciesRef}
-                  onChange={(val) => {
-                    onChange(val.value);
-                    setTimeout(focusCause, 100);
-                  }}
-                  value={value}
-                />
-              )}
-              rules={{
-                validate: (v) =>
-                  (v === null && getValues().type !== "PRODUCT") ||
-                  (getValues().type === "PRODUCT" &&
-                    typeof v === "string" &&
-                    v.trim() !== ""),
-              }}
-            />
-            <br />
-            {errors.speciesId && (
-              <span>{JSON.stringify(errors.speciesId)}</span>
+        {isSpeciesMandatory && (
+          <Controller
+            control={control}
+            defaultValue={null}
+            name="speciesId"
+            render={({ field: { onChange, value } }) => (
+              <SpeciesSelect
+                isDisabled={!type}
+                selectRef={speciesRef}
+                onChange={(val) => {
+                  onChange(val.value);
+                  setTimeout(() => focusNext("cause"), 100);
+                }}
+                value={value}
+              />
             )}
-          </>
+            rules={{
+              validate: (v) =>
+                (v === null && getValues().type !== "PRODUCT") ||
+                (getValues().type === "PRODUCT" &&
+                  typeof v === "string" &&
+                  v.trim() !== ""),
+            }}
+          />
         )}
         <Controller
           control={control}
@@ -335,7 +321,7 @@ function ITTForm() {
               selectRef={causeRef}
               onChange={(val) => {
                 onChange(val.value);
-                setTimeout(focusResolution, 100);
+                setTimeout(() => focusNext("resolution"), 100);
               }}
               value={value}
               type={type}
@@ -346,8 +332,6 @@ function ITTForm() {
               v !== null && typeof v === "string" && v.trim() !== "",
           }}
         />
-        <br />
-        {errors.cause && <span>{JSON.stringify(errors.cause)}</span>}
         <Controller
           control={control}
           defaultValue={null}
@@ -355,9 +339,13 @@ function ITTForm() {
           render={({ field: { onChange, value } }) => (
             <IncidentResolutionSelect
               isDisabled={!cause}
-              focusNext={focusComment}
+              isRefundMandatory={isRefundMandatory}
+              focusNext={focusNext}
               selectRef={resolutionRef}
-              onChange={onChange}
+              onChange={(v) => {
+                onChange(v);
+                trigger("refundAmount");
+              }}
               resolution={value}
             />
           )}
@@ -365,47 +353,36 @@ function ITTForm() {
             validate: (v) => v && v.length !== 0,
           }}
         />
-        <br />
-        {errors.resolution && <span>{JSON.stringify(errors.resolution)}</span>}
-        {/* todo focus conditionnel */}
-        <br />
-        {resolution &&
-          resolution.some((_resolution: string) =>
-            ["PARTIAL_REFUND", "REFUND"].includes(_resolution)
-          ) && (
-            <>
-              <input
-                type="number"
-                {...register("refundAmount", {
-                  validate: (v) => (v ? !Number.isNaN(v) : true),
-                })}
-                step="0.01"
-                min="0"
-              />
-              <br />
-              {errors.refundAmount && (
-                <span>{JSON.stringify(errors.refundAmount)}</span>
-              )}
-            </>
-          )}
+        <input
+          disabled={!resolution || !isRefundMandatory}
+          hidden={!resolution || !isRefundMandatory}
+          type="number"
+          ref={refundAmountRef}
+          {...amountRegister}
+          onKeyDown={(e) => {
+            switch (e.key) {
+              case "Enter":
+              case "Tab": {
+                if (refundAmount) {
+                  focusNext("comment");
+                  e.preventDefault();
+                }
+              }
+            }
+            trigger("refundAmount");
+          }}
+          step="0.01"
+          min="0"
+        />
         <textarea
           disabled={!resolution || resolution.length === 0}
-          {...register("comment")}
+          ref={commentRef}
+          {...commentRegister}
         ></textarea>
-        <br />
-        {errors.comment && <span>{JSON.stringify(errors.comment)}</span>}
-        <br />
-        <button type="submit" disabled={true || !isDirty || !isValid}>
+        <button type="submit" disabled={!isDirty || !isValid}>
           Submit
         </button>
       </form>
-      {/*{emails && date && (*/}
-      {/*  <SimilarIncident*/}
-      {/*    emails={emails}*/}
-      {/*    date={date}*/}
-      {/*    onClick={populateFormFromIncident}*/}
-      {/*  />*/}
-      {/*)}*/}
     </>
   );
 }
