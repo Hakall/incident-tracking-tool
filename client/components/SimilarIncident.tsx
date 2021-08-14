@@ -8,7 +8,7 @@ interface SimilarIncidentProps {
   onClick: (data: Incident) => void;
 }
 
-interface SimilarIncidentData {
+export interface SimilarIncidentData {
   findSimilarIncident: Incident[];
 }
 

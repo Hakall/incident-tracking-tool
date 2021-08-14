@@ -5,6 +5,8 @@ import { GET_SPECIES } from "../gql/Queries";
 import { Species } from "@itt/common";
 
 interface SpeciesSelectProps {
+  focusNext: () => void;
+  selectRef: any;
   onChange: (val: any) => void;
   value: string;
 }
@@ -13,7 +15,12 @@ interface SpeciesData {
   species: Species[];
 }
 
-const SpeciesSelect = ({ onChange, value }: SpeciesSelectProps) => {
+const SpeciesSelect = ({
+  onChange,
+  value,
+  selectRef,
+  focusNext,
+}: SpeciesSelectProps) => {
   const { data, loading, error } = useQuery<SpeciesData>(GET_SPECIES);
 
   const options = React.useMemo(() => {
@@ -32,6 +39,7 @@ const SpeciesSelect = ({ onChange, value }: SpeciesSelectProps) => {
 
   return (
     <Select
+      ref={selectRef}
       options={options}
       className="basic-single"
       classNamePrefix="select"

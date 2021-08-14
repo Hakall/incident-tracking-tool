@@ -3,6 +3,8 @@ import Select from "react-select";
 import { IncidentResolution } from "@itt/common";
 
 interface IncidentResolutionSelectProps {
+  focusNext: () => void;
+  selectRef: any;
   onChange: (val: any) => void;
 }
 
@@ -13,9 +15,12 @@ const options = Object.keys(IncidentResolution).map((key) => ({
 
 const IncidentResolutionSelect = ({
   onChange,
+  selectRef,
+  focusNext,
 }: IncidentResolutionSelectProps) => {
   return (
     <Select
+      ref={selectRef}
       options={options}
       isMulti
       className="basic-single"

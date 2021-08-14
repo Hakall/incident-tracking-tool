@@ -1,5 +1,5 @@
-import React from "react";
-import { useMutation } from "@apollo/client";
+import React, { useRef } from "react";
+import { useMutation, useQuery } from "@apollo/client";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import { CREATE_INCIDENT } from "../gql/Mutations";
 import { EmailsInput } from "../components/EmailsInput";
@@ -8,14 +8,13 @@ import { IncidentTypeSelect } from "../components/IncidentTypeSelect";
 import { IncidentCauseSelect } from "../components/IncidentCauseSelect";
 import { IncidentResolutionSelect } from "../components/IncidentResolutionSelect";
 import { SpeciesSelect } from "../components/SpeciesSelect";
-import SimilarIncident from "../components/SimilarIncident";
+import { SimilarIncidentData } from "../components/SimilarIncident";
 import { Incident } from "@itt/common";
-
-const mailRegex = /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gm;
+import { FIND_SIMILAR_INCIDENT } from "../gql/Queries";
+import { mailRegex } from "../constants/regex";
 
 function ITTForm() {
-  const [createIncident, { data, loading, error }] =
-    useMutation(CREATE_INCIDENT);
+  const [createIncident] = useMutation(CREATE_INCIDENT);
   const {
     clearErrors,
     register,
@@ -25,6 +24,96 @@ function ITTForm() {
     formState: { errors },
     getValues,
   } = useForm();
+
+  const { ref, ...dateRegister } = register("date", {
+    validate: (v) => (v ? !Number.isNaN(new Date(v).getTime()) : true),
+  });
+
+  const emailsRef = useRef<any>(null);
+  const focusEmails = React.useCallback(() => {
+    if (emailsRef.current) {
+      emailsRef.current.select.focus();
+    }
+  }, [emailsRef.current]);
+
+  const dateRef = useRef<any>(null);
+  const focusDate = React.useCallback(() => {
+    if (dateRef.current) {
+      dateRef.current.focus();
+    }
+  }, [dateRef.current]);
+
+  const relayPointRef = useRef<any>(null);
+  const focusRelayPoint = React.useCallback(() => {
+    if (relayPointRef.current) {
+      relayPointRef.current.select.focus();
+    }
+  }, [relayPointRef.current]);
+
+  const typeRef = useRef<any>(null);
+  const focusType = React.useCallback(() => {
+    if (typeRef.current) {
+      typeRef.current.select.focus();
+    }
+  }, [typeRef.current]);
+
+  const causeRef = useRef<any>(null);
+  const focusCause = React.useCallback(() => {
+    if (causeRef.current) {
+      causeRef.current.select.focus();
+    }
+  }, [causeRef.current]);
+
+  const resolutionRef = useRef<any>(null);
+  const focusResolution = React.useCallback(() => {
+    if (resolutionRef.current) {
+      resolutionRef.current.select.focus();
+    }
+  }, [resolutionRef.current]);
+
+  const speciesRef = useRef<any>(null);
+  const focusSpecies = React.useCallback(() => {
+    if (speciesRef.current) {
+      speciesRef.current.select.focus();
+    }
+  }, [speciesRef.current]);
+
+  const refondAmountRef = useRef<any>(null);
+  const focusRefundAmount = React.useCallback(() => {
+    if (refondAmountRef.current) {
+      refondAmountRef.current.select.focus();
+    }
+  }, [refondAmountRef.current]);
+
+  const commentRef = useRef<any>(null);
+  const focusComment = React.useCallback(() => {
+    if (commentRef.current) {
+      commentRef.current.select.focus();
+    }
+  }, [commentRef.current]);
+
+  const populateFormFromIncident = (incident: Incident) => {
+    clearErrors();
+    setValue("relayPointId", incident.relayPoint._id);
+    setValue("type", incident.type);
+    setValue("cause", incident.cause);
+    setValue("resolution", incident.resolution);
+    setValue("refundAmount", incident.refundAmount);
+    setValue("comment", incident.comment);
+    setValue("speciesId", incident.species?._id);
+  };
+
+  const resetForm = () => {
+    setValue("emails", []);
+    setValue("date", null);
+    setValue("relayPointId", null);
+    setValue("type", null);
+    setValue("cause", null);
+    setValue("resolution", []);
+    setValue("refundAmount", null);
+    setValue("comment", null);
+    setValue("speciesId", null);
+  };
 
   const type = useWatch({
     control,
@@ -46,10 +135,22 @@ function ITTForm() {
     name: "date",
   });
 
+  const { data } = useQuery<SimilarIncidentData>(FIND_SIMILAR_INCIDENT, {
+    variables: { incident: { emails, date } },
+    skip: !emails || emails.length < 1 || !date,
+  });
+
+  React.useEffect(() => {
+    if (
+      data &&
+      data.findSimilarIncident &&
+      data.findSimilarIncident.length > 0
+    ) {
+      populateFormFromIncident(data.findSimilarIncident[0]);
+    }
+  }, [data]);
+
   const onSubmit = async () => {
-    console.log("onSubmit");
-    // setValue("relayPointId", null);
-    // setValue("emails", []);
     const incidentToCreate = getValues();
 
     try {
@@ -76,17 +177,8 @@ function ITTForm() {
         },
       });
     } catch (e) {}
-  };
 
-  const populateFormFromIncident = (incident: Incident) => {
-    clearErrors();
-    setValue("relayPointId", incident.relayPoint._id);
-    setValue("type", incident.type);
-    setValue("cause", incident.cause);
-    setValue("resolution", incident.resolution);
-    setValue("refundAmount", incident.refundAmount);
-    setValue("comment", incident.comment);
-    setValue("speciesId", incident.species?._id);
+    resetForm();
   };
 
   return (
@@ -98,6 +190,8 @@ function ITTForm() {
           name="emails"
           render={({ field: { onChange, value } }) => (
             <EmailsInput
+              focusNext={focusDate}
+              selectRef={emailsRef}
               emails={value}
               onChange={(val) => {
                 onChange(val.emails);
@@ -115,9 +209,21 @@ function ITTForm() {
         {/* todo default date this day, maybe from previous incident for same mail*/}
         <input
           type="date"
-          {...register("date", {
-            validate: (v) => (v ? !Number.isNaN(new Date(v).getTime()) : true),
-          })}
+          ref={(e) => {
+            dateRef.current = e;
+          }}
+          {...dateRegister}
+          onKeyDown={(e) => {
+            switch (e.key) {
+              case "Enter":
+              case "Tab": {
+                if (date) {
+                  focusRelayPoint();
+                  e.preventDefault();
+                }
+              }
+            }
+          }}
           required
         />
         <br />
@@ -129,6 +235,8 @@ function ITTForm() {
           name="relayPointId"
           render={({ field: { onChange, value } }) => (
             <RelayPointsSelect
+              focusNext={focusType}
+              selectRef={relayPointRef}
               onChange={(val) => {
                 onChange(val.value);
               }}
@@ -151,6 +259,8 @@ function ITTForm() {
           name="type"
           render={({ field: { onChange, value } }) => (
             <IncidentTypeSelect
+              focusNext={focusCause}
+              selectRef={typeRef}
               onChange={(val) => {
                 onChange(val.value);
                 setValue("cause", null);
@@ -165,12 +275,15 @@ function ITTForm() {
         />
         <br />
         {errors.type && <span>{JSON.stringify(errors.type)}</span>}
+        {/* todo focus conditionnel */}
         <Controller
           control={control}
           defaultValue={null}
           name="cause"
           render={({ field: { onChange, value } }) => (
             <IncidentCauseSelect
+              focusNext={focusResolution}
+              selectRef={causeRef}
               onChange={(val) => {
                 onChange(val.value);
               }}
@@ -185,12 +298,15 @@ function ITTForm() {
         />
         <br />
         {errors.cause && <span>{JSON.stringify(errors.cause)}</span>}
+        {/* todo focus conditionnel */}
         <Controller
           control={control}
           defaultValue={null}
           name="resolution"
           render={({ field: { onChange, value } }) => (
             <IncidentResolutionSelect
+              focusNext={focusComment}
+              selectRef={resolutionRef}
               onChange={(values: { value: string }[]) => {
                 onChange(values.map(({ value }) => value));
               }}
@@ -210,6 +326,8 @@ function ITTForm() {
               name="speciesId"
               render={({ field: { onChange, value } }) => (
                 <SpeciesSelect
+                  focusNext={focusResolution}
+                  selectRef={speciesRef}
                   onChange={(val) => {
                     onChange(val.value);
                   }}
@@ -217,16 +335,11 @@ function ITTForm() {
                 />
               )}
               rules={{
-                validate: (v) => {
-                  // todo move validators to common
-                  console.log(getValues().type);
-                  return (
-                    (v === null && getValues().type !== "PRODUCT") ||
-                    (getValues().type === "PRODUCT" &&
-                      typeof v === "string" &&
-                      v.trim() !== "")
-                  );
-                },
+                validate: (v) =>
+                  (v === null && getValues().type !== "PRODUCT") ||
+                  (getValues().type === "PRODUCT" &&
+                    typeof v === "string" &&
+                    v.trim() !== ""),
               }}
             />
             <br />
@@ -261,13 +374,13 @@ function ITTForm() {
         <br />
         <button type="submit">Submit</button>
       </form>
-      {emails && date && (
-        <SimilarIncident
-          emails={emails}
-          date={date}
-          onClick={populateFormFromIncident}
-        />
-      )}
+      {/*{emails && date && (*/}
+      {/*  <SimilarIncident*/}
+      {/*    emails={emails}*/}
+      {/*    date={date}*/}
+      {/*    onClick={populateFormFromIncident}*/}
+      {/*  />*/}
+      {/*)}*/}
     </>
   );
 }

@@ -1,3 +1,4 @@
+import "bulma/css/bulma.css";
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";

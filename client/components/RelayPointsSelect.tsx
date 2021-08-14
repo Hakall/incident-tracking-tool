@@ -5,6 +5,8 @@ import { GET_RELAY_POINTS } from "../gql/Queries";
 import { RelayPoint } from "@itt/common";
 
 interface RelayPointsSelectProps {
+  focusNext: () => void;
+  selectRef: any;
   onChange: (val: any) => void;
   value: string;
 }
@@ -13,7 +15,12 @@ interface RelayPointsData {
   relayPoints: RelayPoint[];
 }
 
-const RelayPointsSelect = ({ onChange, value }: RelayPointsSelectProps) => {
+const RelayPointsSelect = ({
+  onChange,
+  value,
+  focusNext,
+  selectRef,
+}: RelayPointsSelectProps) => {
   const { data, loading, error } = useQuery<RelayPointsData>(GET_RELAY_POINTS);
 
   const options = React.useMemo(() => {
@@ -32,6 +39,7 @@ const RelayPointsSelect = ({ onChange, value }: RelayPointsSelectProps) => {
 
   return (
     <Select
+      ref={selectRef}
       options={options}
       className="basic-single"
       classNamePrefix="select"

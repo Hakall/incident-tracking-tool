@@ -3,6 +3,8 @@ import Select from "react-select";
 import { IncidentType } from "@itt/common";
 
 interface IncidentTypeSelectProps {
+  focusNext: () => void;
+  selectRef: any;
   onChange: (val: any) => void;
   value: string;
 }
@@ -12,7 +14,12 @@ const options = Object.keys(IncidentType).map((key) => ({
   label: IncidentType[key as keyof typeof IncidentType],
 }));
 
-const IncidentTypeSelect = ({ onChange, value }: IncidentTypeSelectProps) => {
+const IncidentTypeSelect = ({
+  onChange,
+  value,
+  selectRef,
+  focusNext,
+}: IncidentTypeSelectProps) => {
   const selectedValue = React.useMemo(() => {
     const optionValue = options.find((option) => option.value === value);
     return optionValue ? optionValue : { value: "", label: "" };
@@ -20,6 +27,7 @@ const IncidentTypeSelect = ({ onChange, value }: IncidentTypeSelectProps) => {
 
   return (
     <Select
+      ref={selectRef}
       options={options}
       className="basic-single"
       classNamePrefix="select"
