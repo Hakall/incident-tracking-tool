@@ -46,7 +46,7 @@ const IncidentResolutionSelect = ({
         options.find((option) => option.value === _resolution)
       )
       .filter((_resolution) => _resolution);
-  }, [options, resolution]);
+  }, [resolution]);
   return (
     <Select
       isDisabled={isDisabled}

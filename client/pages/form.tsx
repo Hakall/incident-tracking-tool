@@ -53,43 +53,29 @@ function ITTForm() {
   const commentRef = useRef<any>(null);
   const submitRef = useRef<any>(null);
 
-  const focusNext = React.useCallback(
-    (name: string) => {
-      if (name === "date" && dateRef.current) {
-        dateRef.current.focus();
-      } else if (name === "refundAmount" && refundAmountRef.current) {
-        refundAmountRef.current.focus();
-      } else if (name === "comment" && commentRef.current) {
-        commentRef.current.focus();
-      } else if (name === "species" && speciesRef.current) {
-        speciesRef.current.select.focus();
-      } else if (name === "resolution" && resolutionRef.current) {
-        resolutionRef.current.select.focus();
-      } else if (name === "cause" && causeRef.current) {
-        causeRef.current.select.focus();
-      } else if (name === "type" && typeRef.current) {
-        typeRef.current.select.focus();
-      } else if (name === "relayPoint" && relayPointRef.current) {
-        relayPointRef.current.select.focus();
-      } else if (name === "emails" && emailsRef.current) {
-        emailsRef.current.select.focus();
-      } else if (name === "submit" && submitRef.current) {
-        submitRef.current.focus();
-      }
-    },
-    [
-      dateRef.current,
-      refundAmountRef.current,
-      commentRef.current,
-      speciesRef.current,
-      resolutionRef.current,
-      causeRef.current,
-      typeRef.current,
-      relayPointRef.current,
-      emailsRef.current,
-      submitRef.current,
-    ]
-  );
+  const focusNext = React.useCallback((name: string) => {
+    if (name === "date" && dateRef.current) {
+      dateRef.current.focus();
+    } else if (name === "refundAmount" && refundAmountRef.current) {
+      refundAmountRef.current.focus();
+    } else if (name === "comment" && commentRef.current) {
+      commentRef.current.focus();
+    } else if (name === "species" && speciesRef.current) {
+      speciesRef.current.select.focus();
+    } else if (name === "resolution" && resolutionRef.current) {
+      resolutionRef.current.select.focus();
+    } else if (name === "cause" && causeRef.current) {
+      causeRef.current.select.focus();
+    } else if (name === "type" && typeRef.current) {
+      typeRef.current.select.focus();
+    } else if (name === "relayPoint" && relayPointRef.current) {
+      relayPointRef.current.select.focus();
+    } else if (name === "emails" && emailsRef.current) {
+      emailsRef.current.select.focus();
+    } else if (name === "submit" && submitRef.current) {
+      submitRef.current.focus();
+    }
+  }, []);
 
   const [
     type,
@@ -116,7 +102,7 @@ function ITTForm() {
     skip: !emails || emails.length < 1 || !date,
   });
 
-  const populateFormFromIncident = (incident: Incident) => {
+  const populateFormFromIncident = React.useCallback((incident: Incident) => {
     clearErrors();
     setValue("relayPointId", incident.relayPoint._id);
     setValue("type", incident.type);
@@ -125,7 +111,7 @@ function ITTForm() {
     setValue("refundAmount", incident.refundAmount);
     setValue("comment", incident.comment);
     setValue("speciesId", incident.species?._id);
-  };
+  }, []);
 
   React.useEffect(() => {
     if (
@@ -135,7 +121,7 @@ function ITTForm() {
     ) {
       populateFormFromIncident(data.findSimilarIncident[0]);
     }
-  }, [data]);
+  }, [data, populateFormFromIncident]);
 
   const isRefundMandatory = React.useMemo(() => {
     if (!resolution) {
