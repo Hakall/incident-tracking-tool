@@ -74,6 +74,7 @@ I choose [jest](https://jestjs.io/fr/) for automated tests (+ [Enzyme](https://e
 * test if donut is better than bar chart
 * bulma theming
 * findSimilarIncident, maybe test if incident.emails contains at least one matching mail
+* findSimilarIncident, maybe we should add createdAt attribute in Incident to get last created one
 * Form validation error styling
 * More automated tests
 * Design Dockerfiles for production mode

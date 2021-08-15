@@ -134,7 +134,9 @@ function ITTForm() {
       setValue("cause", incident.cause);
       setValue("resolution", incident.resolution);
       setValue("refundAmount", incident.refundAmount);
+      refundAmountRef.current.value = incident.refundAmount;
       setValue("comment", incident.comment);
+      commentRef.current.value = incident.comment;
       setValue("speciesId", incident.species?._id);
     },
     [clearErrors, setValue]
