@@ -18,6 +18,12 @@ import { FIND_SIMILAR_INCIDENT } from "../gql/Queries";
 import { mailRegex } from "../constants/regex";
 
 import styles from "../styles/form.module.css";
+import { EmailsController } from "../components/form/EmailsController";
+import { RelayPointsController } from "../components/form/RelayPointsController";
+import { IncidentTypeController } from "../components/form/IncidentTypeController";
+import { SpeciesController } from "../components/form/SpeciesController";
+import { IncidentCauseController } from "../components/form/IncidentCauseController";
+import { IncidentResolutionController } from "../components/form/IncidentResolutionController";
 
 function ITTForm() {
   const notifySuccess = () =>
@@ -228,225 +234,129 @@ function ITTForm() {
   };
 
   return (
-    <div className={`columns`}>
+    <>
       <Navbar active={"form"} />
-      {/* todo split controllers to components*/}
-      <form
-        className={`column is-half is-offset-one-quarter ${styles.form}`}
-        onSubmit={checkSubmit}
-      >
-        <Controller
-          defaultValue={[]}
-          control={control}
-          name="emails"
-          render={({ field: { onChange, value } }) => (
-            <EmailsInput
-              focusNext={focusNext}
-              selectRef={emailsRef}
-              emails={value}
-              onChange={(val) => {
-                onChange(val.emails);
-              }}
-            ></EmailsInput>
-          )}
-          rules={{
-            validate: (v: string[]) =>
-              v && v.length !== 0 && !v.some((mail) => !mail.match(mailRegex)),
-          }}
-        />
-        {/* todo default date this day, maybe from previous incident for same mail*/}
-        <input
-          type="date"
-          className={"input"}
-          disabled={!emails || (emails && emails.length === 0)}
-          ref={(e) => {
-            dateRef.current = e;
-          }}
-          {...dateRegister}
-          onKeyDown={(e) => {
-            switch (e.key) {
-              case "Enter":
-              case "Tab": {
-                if (date) {
-                  focusNext("relayPoint");
-                  e.preventDefault();
+      <div className={`columns`}>
+        <form
+          className={`column is-half is-offset-one-quarter ${styles.form}`}
+          onSubmit={checkSubmit}
+        >
+          <EmailsController
+            control={control}
+            emailsRef={emailsRef}
+            focusNext={focusNext}
+          />
+          {/* todo default date this day, maybe from previous incident for same mail*/}
+          <input
+            type="date"
+            className={"input"}
+            disabled={!emails || (emails && emails.length === 0)}
+            ref={(e) => {
+              dateRef.current = e;
+            }}
+            {...dateRegister}
+            onKeyDown={(e) => {
+              switch (e.key) {
+                case "Enter":
+                case "Tab": {
+                  if (date) {
+                    focusNext("relayPoint");
+                    e.preventDefault();
+                  }
                 }
               }
-            }
-          }}
-          onChange={(v) => setValue("date", v.target.value)}
-          required
-        />
-        <Controller
-          control={control}
-          defaultValue={null}
-          name="relayPointId"
-          render={({ field: { onChange, value } }) => (
-            <RelayPointsSelect
-              isDisabled={!date}
-              selectRef={relayPointRef}
-              onChange={(val) => {
-                setTimeout(() => focusNext("type"), 100);
-                onChange(val.value);
-              }}
-              value={value}
-            />
-          )}
-          rules={{
-            validate: (v) =>
-              v !== null && typeof v === "string" && v.trim() !== "",
-          }}
-        />
-        <Controller
-          control={control}
-          defaultValue={null}
-          name="type"
-          render={({ field: { onChange, value } }) => (
-            <IncidentTypeSelect
-              isDisabled={!relayPointId}
-              selectRef={typeRef}
-              onChange={(val) => {
-                onChange(val.value);
-                setValue("cause", null);
-                if (val.value === "PRODUCT") {
-                  setTimeout(() => focusNext("species"), 100);
-                } else {
-                  setTimeout(() => focusNext("cause"), 100);
-                }
-              }}
-              value={value}
-            />
-          )}
-          rules={{
-            validate: (v) =>
-              v !== null && typeof v === "string" && v.trim() !== "",
-          }}
-        />
-
-        {errors.type && <span>{JSON.stringify(errors.type)}</span>}
-        {isSpeciesMandatory && (
-          <Controller
-            control={control}
-            defaultValue={null}
-            name="speciesId"
-            render={({ field: { onChange, value } }) => (
-              <SpeciesSelect
-                isDisabled={!type}
-                selectRef={speciesRef}
-                onChange={(val) => {
-                  onChange(val.value);
-                  setTimeout(() => focusNext("cause"), 100);
-                }}
-                value={value}
-              />
-            )}
-            rules={{
-              validate: (v) =>
-                (v === null && getValues().type !== "PRODUCT") ||
-                (getValues().type === "PRODUCT" &&
-                  typeof v === "string" &&
-                  v.trim() !== ""),
             }}
+            onChange={(v) => setValue("date", v.target.value)}
+            required
           />
-        )}
-        <Controller
-          control={control}
-          defaultValue={null}
-          name="cause"
-          render={({ field: { onChange, value } }) => (
-            <IncidentCauseSelect
-              isDisabled={!type}
-              selectRef={causeRef}
-              onChange={(val) => {
-                onChange(val.value);
-                setTimeout(() => focusNext("resolution"), 100);
-              }}
-              value={value}
+          <RelayPointsController
+            date={date}
+            focusNext={focusNext}
+            relayPointRef={relayPointRef}
+            control={control}
+          />
+          <IncidentTypeController
+            relayPointId={relayPointId}
+            control={control}
+            focusNext={focusNext}
+            setValue={setValue}
+            typeRef={typeRef}
+          />
+          {isSpeciesMandatory && (
+            <SpeciesController
+              focusNext={focusNext}
+              control={control}
+              speciesRef={speciesRef}
               type={type}
             />
           )}
-          rules={{
-            validate: (v) =>
-              v !== null && typeof v === "string" && v.trim() !== "",
-          }}
-        />
-        <Controller
-          control={control}
-          defaultValue={null}
-          name="resolution"
-          render={({ field: { onChange, value } }) => (
-            <IncidentResolutionSelect
-              isDisabled={!cause}
-              isRefundMandatory={isRefundMandatory}
-              focusNext={focusNext}
-              selectRef={resolutionRef}
-              onChange={(...args) => {
-                if (args.length) {
-                  onChange(args[0]);
-                } else {
-                  onChange([]);
-                }
-                trigger("refundAmount");
-              }}
-              resolution={value}
-            />
-          )}
-          rules={{
-            validate: (v) => v && v.length !== 0,
-          }}
-        />
-        <input
-          disabled={!resolution || !isRefundMandatory}
-          hidden={!resolution || !isRefundMandatory}
-          type="number"
-          className={"input"}
-          ref={refundAmountRef}
-          {...amountRegister}
-          onKeyDown={(e) => {
-            switch (e.key) {
-              case "Enter":
-              case "Tab": {
-                if (refundAmount) {
-                  focusNext("comment");
-                  e.preventDefault();
+          <IncidentCauseController
+            focusNext={focusNext}
+            control={control}
+            type={type}
+            causeRef={causeRef}
+          />
+          <IncidentResolutionController
+            control={control}
+            focusNext={focusNext}
+            cause={cause}
+            isRefundMandatory={isRefundMandatory}
+            resolutionRef={resolutionRef}
+            trigger={trigger}
+          />
+          <input
+            disabled={!resolution || !isRefundMandatory}
+            hidden={!resolution || !isRefundMandatory}
+            type="number"
+            className={"input"}
+            ref={refundAmountRef}
+            {...amountRegister}
+            onKeyDown={(e) => {
+              switch (e.key) {
+                case "Enter":
+                case "Tab": {
+                  if (refundAmount) {
+                    focusNext("comment");
+                    e.preventDefault();
+                  }
                 }
               }
-            }
-            trigger("refundAmount");
-          }}
-          onChange={(v) => setValue("refundAmount", v.target.value)}
-          step="0.01"
-          min="0"
-        />
-        <textarea
-          className={"textarea"}
-          disabled={!resolution || resolution.length === 0}
-          ref={commentRef}
-          {...commentRegister}
-          onKeyDown={(e) => {
-            switch (e.key) {
-              case "Enter":
-              case "Tab": {
-                if (!comment || comment.trim() === "") {
-                  focusNext("submit");
-                  e.preventDefault();
+              trigger("refundAmount");
+            }}
+            onChange={(v) => setValue("refundAmount", v.target.value)}
+            step="0.01"
+            min="0"
+          />
+          <textarea
+            className={"textarea"}
+            disabled={!resolution || resolution.length === 0}
+            ref={commentRef}
+            {...commentRegister}
+            onKeyDown={(e) => {
+              switch (e.key) {
+                case "Enter":
+                case "Tab": {
+                  if (!comment || comment.trim() === "") {
+                    focusNext("submit");
+                    e.preventDefault();
+                  }
                 }
               }
-            }
-          }}
-          onChange={(v) => setValue("comment", v.target.value)}
-          value={comment || ""}
-        ></textarea>
-        <button
-          className={`button is-primary ${styles["centered-button"]}`}
-          ref={submitRef}
-          type="submit"
-          disabled={!isDirty || !isValid}
-        >
-          Créer incident
-        </button>
-      </form>
-    </div>
+            }}
+            onChange={(v) => setValue("comment", v.target.value)}
+            value={comment || ""}
+          ></textarea>
+          <button
+            className={`button is-primary ${styles["centered-button"]}`}
+            ref={submitRef}
+            type="submit"
+            disabled={!isDirty || !isValid}
+          >
+            Créer incident
+          </button>
+        </form>
+      </div>
+    </>
   );
 }
 
