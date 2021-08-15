@@ -72,6 +72,7 @@ I choose [jest](https://jestjs.io/fr/) for automated tests (+ [Enzyme](https://e
 ## Suggested improvements
 
 * Better design
+* More automated tests
 * Split [form.tsx](./client/pages/form.tsx) in multiple components (for all Controllers)
 * Search and autocomplete emails in [EmailsInput](./client/components/EmailsInput.tsx)
 * Default date to Today in date input
