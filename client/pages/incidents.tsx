@@ -1,16 +1,11 @@
 import React, { useState } from "react";
-import { useTable } from "react-table";
 import { useQuery } from "@apollo/client";
-import {
-  Incident,
-  IncidentCause,
-  IncidentResolution,
-  IncidentType,
-} from "@itt/common";
+import { Incident } from "@itt/common";
 import { GET_INCIDENTS } from "../gql/Queries";
-import GroupedByDateAndProduct from "../components/GroupedByDateAndProduct";
 import { Pagination } from "@itt/common/src/models/pagination";
 import { IncidentsList } from "../components/IncidentsList";
+
+import styles from "../styles/incidents.module.css";
 
 interface IncidentsData {
   incidents: {
@@ -20,7 +15,7 @@ interface IncidentsData {
 }
 
 function Incidents() {
-  const [pagination, setPagination] = useState({ size: 25, page: 30 });
+  const [pagination, setPagination] = useState({ size: 10, page: 1 });
   const { data, loading, error } = useQuery<IncidentsData>(GET_INCIDENTS, {
     variables: {
       pagination,
@@ -48,22 +43,30 @@ function Incidents() {
   return (
     <>
       <IncidentsList incidents={data.incidents.incidents} />
-      <div>
+      <div className={"columns"}>
         {/*add controle, improve pagination canPrev canNext etc...*/}
-        <button onClick={goPrev} disabled={pagination.page === 1}>
-          Previous
-        </button>
-        <button
-          onClick={goNext}
-          disabled={
-            pagination.page * pagination.size >= data.incidents.pagination.total
-          }
-        >
-          Next
-        </button>
+        <div className={"column"}>
+          <button
+            className={`button ${styles["centered-button"]}`}
+            onClick={goPrev}
+            disabled={pagination.page === 1}
+          >
+            Previous
+          </button>
+        </div>
+        <div className={"column"}>
+          <button
+            className={`button is-primary ${styles["centered-button"]}`}
+            onClick={goNext}
+            disabled={
+              pagination.page * pagination.size >=
+              data.incidents.pagination.total
+            }
+          >
+            Next
+          </button>
+        </div>
       </div>
-      {/*  move to another page or useMemo for not rerender groupeBy when incidents page goNext */}
-      <GroupedByDateAndProduct></GroupedByDateAndProduct>
     </>
   );
 }

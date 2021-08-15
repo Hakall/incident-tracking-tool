@@ -2,7 +2,7 @@ import React from "react";
 import { useQuery } from "@apollo/client";
 import { INCIDENTS_BY_DATE_AND_PRODUCT } from "../gql/Queries";
 import { Incident } from "@itt/common";
-import GroupByDateAndProduct from "./GroupByDateAndProduct";
+import GroupByDateAndProduct from "../components/GroupByDateAndProduct";
 import { Pagination } from "@itt/common/src/models/pagination";
 
 interface IncidentsData {

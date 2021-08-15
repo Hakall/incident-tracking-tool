@@ -1,0 +1,10 @@
+.fullheight-table {
+    margin-top: 15vh;
+    min-height: 75vh;
+}
+
+.centered-button {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}

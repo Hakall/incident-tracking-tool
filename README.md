@@ -73,6 +73,7 @@ I choose [jest](https://jestjs.io/fr/) for automated tests (+ [Enzyme](https://e
 
 * Better design
 * Form validation error styling
+* success and errors toasts
 * More automated tests
 * Split [form.tsx](./client/pages/form.tsx) in multiple components (for all Controllers)
 * Search and autocomplete emails in [EmailsInput](./client/components/EmailsInput.tsx)

@@ -7,6 +7,8 @@ import {
 } from "@itt/common";
 import { Column, useTable } from "react-table";
 
+import styles from "../styles/incidents.module.css";
+
 interface IncidentsListProps {
   incidents: Incident[];
 }
@@ -88,7 +90,10 @@ const IncidentsList = (props: IncidentsListProps) => {
     });
 
   return (
-    <table {...getTableProps()}>
+    <table
+      {...getTableProps()}
+      className={`table is-striped is-bordered is-hoverable is-fullwidth ${styles["fullheight-table"]}`}
+    >
       <thead>
         {headerGroups.map((headerGroup) => {
           const { key, ...headerProps } = headerGroup.getHeaderGroupProps();
