@@ -102,6 +102,7 @@ export const typeDefs = gql`
   type Query {
     relayPoints: [RelayPoint]
     species: [Species]
+    findEmailsFromIncidents(email: String!): [String]
     incidents(pagination: PaginationInput): Incidents
     incidentsByDateAndProduct(
       pagination: PaginationInput

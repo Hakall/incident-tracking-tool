@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import CreatableSelect from "react-select";
 import { mailRegex } from "../constants/regex";
+import { useQuery } from "@apollo/client";
+import { FIND_EMAILS_FROM_INCIDENTS } from "../gql/Queries";
 
 const components = {
   DropdownIndicator: null,
@@ -11,6 +13,10 @@ interface EmailsInputProps {
   selectRef: any;
   onChange: (val: any) => void;
   emails: string[];
+}
+
+interface EmailsFromIncidentsData {
+  findEmailsFromIncidents: string[];
 }
 
 function EmailsInput({
@@ -24,6 +30,23 @@ function EmailsInput({
   }>({
     inputValue: "",
   });
+
+  const { data, loading } = useQuery<EmailsFromIncidentsData>(
+    FIND_EMAILS_FROM_INCIDENTS,
+    {
+      variables: { email: emailsState.inputValue },
+      skip: !emailsState.inputValue || emailsState.inputValue.trim().length < 1,
+    }
+  );
+
+  const options = React.useMemo(() => {
+    return data
+      ? data.findEmailsFromIncidents.map((mail) => ({
+          value: mail,
+          label: mail,
+        }))
+      : [];
+  }, [data]);
 
   const values = React.useMemo(() => {
     return emails.map((mail) => ({ value: mail, label: mail }));
@@ -41,9 +64,10 @@ function EmailsInput({
   };
   const handleKeyDown = (event: any) => {
     switch (event.key) {
-      case "Enter":
       case "Tab": {
         event.preventDefault();
+      }
+      case "Enter": {
         if (
           emailsState.inputValue &&
           emailsState.inputValue.trim() !== "" &&
@@ -73,7 +97,7 @@ function EmailsInput({
       }
     }
   };
-  // todo add search / autocomplete with used emails
+
   return (
     <CreatableSelect
       ref={selectRef}
@@ -81,10 +105,12 @@ function EmailsInput({
       inputValue={emailsState.inputValue}
       isClearable
       isMulti
-      menuIsOpen={false}
+      menuIsOpen={options.length > 0}
+      isLoading={loading}
       onChange={handleChange}
       onInputChange={handleInputChange}
       onKeyDown={handleKeyDown}
+      options={options}
       value={values}
     />
   );

@@ -1,5 +1,6 @@
 import { Incident } from "@itt/common";
 import groupBy from "lodash/groupBy";
+import uniq from "lodash/uniq";
 import { db } from "../loaders";
 import { incidents } from "../data/incidents";
 import { relayPointInterface } from "./RelayPointInterface";
@@ -117,6 +118,36 @@ class IncidentInterface {
           }
           resolve(newDocs);
         });
+    });
+  }
+
+  async findEmailsFromIncidents(email: string): Promise<string[]> {
+    return new Promise<string[]>((resolve, reject) => {
+      db.incidents.find(
+        {
+          $where: function () {
+            return (
+              this.emails.filter((mail: string) => mail.startsWith(email))
+                .length > 0
+            );
+          },
+        },
+        (err: Error | null, newDocs: Incident[]) => {
+          if (err) {
+            reject(err);
+          }
+
+          resolve(
+            uniq(
+              newDocs.flatMap((incident) => {
+                return incident.emails.filter((mail: string) =>
+                  mail.startsWith(email)
+                );
+              })
+            )
+          );
+        }
+      );
     });
   }
 }

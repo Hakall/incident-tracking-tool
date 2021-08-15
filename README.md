@@ -71,10 +71,9 @@ I choose [jest](https://jestjs.io/fr/) for automated tests (+ [Enzyme](https://e
 
 ## Suggested improvements
 
-* change search/autocomplete strategy in relaypointInput
 * test if donut is better than bar chart
+* findSimilarIncident, maybe test if incident.emails contains at least one matching mail
 * Default date to Today in date input
-* add navigation buttons on incidentsByDateAndPorduct
 * Form validation error styling
 * More automated tests
 * Search and autocomplete emails in [EmailsInput](./client/components/EmailsInput.tsx)
