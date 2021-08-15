@@ -1,0 +1,13 @@
+.form {
+    padding-top: 15vh;
+}
+
+.form > * {
+    margin-bottom: 2rem;
+}
+
+.centered-button {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}

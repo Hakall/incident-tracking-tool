@@ -1,7 +1,9 @@
 import React, { useRef } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { useForm, Controller, useWatch } from "react-hook-form";
-import { CREATE_INCIDENT } from "../gql/Mutations";
+
+import { Incident } from "@itt/common";
+
 import { EmailsInput } from "../components/EmailsInput";
 import { RelayPointsSelect } from "../components/RelayPointsSelect";
 import { IncidentTypeSelect } from "../components/IncidentTypeSelect";
@@ -9,9 +11,11 @@ import { IncidentCauseSelect } from "../components/IncidentCauseSelect";
 import { IncidentResolutionSelect } from "../components/IncidentResolutionSelect";
 import { SpeciesSelect } from "../components/SpeciesSelect";
 import { SimilarIncidentData } from "../components/SimilarIncident";
-import { Incident } from "@itt/common";
+import { CREATE_INCIDENT } from "../gql/Mutations";
 import { FIND_SIMILAR_INCIDENT } from "../gql/Queries";
 import { mailRegex } from "../constants/regex";
+
+import styles from "../styles/form.module.css";
 
 function ITTForm() {
   const [createIncident] = useMutation(CREATE_INCIDENT);
@@ -146,6 +150,8 @@ function ITTForm() {
     });
     setValue("emails", []);
     setValue("resolution", []);
+    setValue("refundAmount", null);
+    refundAmountRef.current.value = null;
     clearErrors();
   };
 
@@ -195,9 +201,12 @@ function ITTForm() {
   };
 
   return (
-    <>
+    <div className={`columns`}>
       {/* todo split controllers to components*/}
-      <form onSubmit={checkSubmit}>
+      <form
+        className={`column is-half is-offset-one-quarter ${styles.form}`}
+        onSubmit={checkSubmit}
+      >
         <Controller
           defaultValue={[]}
           control={control}
@@ -217,10 +226,10 @@ function ITTForm() {
               v && v.length !== 0 && !v.some((mail) => !mail.match(mailRegex)),
           }}
         />
-        <br />
         {/* todo default date this day, maybe from previous incident for same mail*/}
         <input
           type="date"
+          className={"input"}
           disabled={!emails || (emails && emails.length === 0)}
           ref={(e) => {
             dateRef.current = e;
@@ -285,7 +294,7 @@ function ITTForm() {
               v !== null && typeof v === "string" && v.trim() !== "",
           }}
         />
-        <br />
+
         {errors.type && <span>{JSON.stringify(errors.type)}</span>}
         {isSpeciesMandatory && (
           <Controller
@@ -362,6 +371,7 @@ function ITTForm() {
           disabled={!resolution || !isRefundMandatory}
           hidden={!resolution || !isRefundMandatory}
           type="number"
+          className={"input"}
           ref={refundAmountRef}
           {...amountRegister}
           onKeyDown={(e) => {
@@ -381,6 +391,7 @@ function ITTForm() {
           min="0"
         />
         <textarea
+          className={"textarea"}
           disabled={!resolution || resolution.length === 0}
           ref={commentRef}
           {...commentRegister}
@@ -398,11 +409,16 @@ function ITTForm() {
           onChange={(v) => setValue("comment", v.target.value)}
           value={comment || ""}
         ></textarea>
-        <button ref={submitRef} type="submit" disabled={!isDirty || !isValid}>
-          Submit
+        <button
+          className={`button is-primary ${styles["centered-button"]}`}
+          ref={submitRef}
+          type="submit"
+          disabled={!isDirty || !isValid}
+        >
+          Créer incident
         </button>
       </form>
-    </>
+    </div>
   );
 }
 
