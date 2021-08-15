@@ -16,6 +16,7 @@ import { FIND_SIMILAR_INCIDENT } from "../gql/Queries";
 import { mailRegex } from "../constants/regex";
 
 import styles from "../styles/form.module.css";
+import { Navbar } from "../components/Navbar";
 
 function ITTForm() {
   const [createIncident] = useMutation(CREATE_INCIDENT);
@@ -202,6 +203,7 @@ function ITTForm() {
 
   return (
     <div className={`columns`}>
+      <Navbar active={"form"} />
       {/* todo split controllers to components*/}
       <form
         className={`column is-half is-offset-one-quarter ${styles.form}`}

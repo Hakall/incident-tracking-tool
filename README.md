@@ -71,13 +71,14 @@ I choose [jest](https://jestjs.io/fr/) for automated tests (+ [Enzyme](https://e
 
 ## Suggested improvements
 
-* Better design
-* Form validation error styling
 * success and errors toasts
-* More automated tests
+* loaders
 * Split [form.tsx](./client/pages/form.tsx) in multiple components (for all Controllers)
-* Search and autocomplete emails in [EmailsInput](./client/components/EmailsInput.tsx)
+* change search/autocomplete strategy in relaypointInput
 * Default date to Today in date input
+* add navigation buttons on incidentsByDateAndPorduct
+* Form validation error styling
+* More automated tests
+* Search and autocomplete emails in [EmailsInput](./client/components/EmailsInput.tsx)
 * Design Dockerfiles for production mode
 * More description in Readme and more comments in code
-* change search/autocomplete strategy in relaypointInput

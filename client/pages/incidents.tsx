@@ -6,6 +6,7 @@ import { Pagination } from "@itt/common/src/models/pagination";
 import { IncidentsList } from "../components/IncidentsList";
 
 import styles from "../styles/incidents.module.css";
+import { Navbar } from "../components/Navbar";
 
 interface IncidentsData {
   incidents: {
@@ -42,9 +43,9 @@ function Incidents() {
 
   return (
     <>
+      <Navbar active={"incidents"} />
       <IncidentsList incidents={data.incidents.incidents} />
       <div className={"columns"}>
-        {/*add controle, improve pagination canPrev canNext etc...*/}
         <div className={"column"}>
           <button
             className={`button ${styles["centered-button"]}`}
