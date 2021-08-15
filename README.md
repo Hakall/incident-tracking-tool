@@ -71,7 +71,6 @@ I choose [jest](https://jestjs.io/fr/) for automated tests (+ [Enzyme](https://e
 
 ## Suggested improvements
 
-* success and errors toasts
 * loaders
 * Split [form.tsx](./client/pages/form.tsx) in multiple components (for all Controllers)
 * change search/autocomplete strategy in relaypointInput

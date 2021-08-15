@@ -23,9 +23,20 @@ function Incidents() {
     },
   });
 
-  if (loading || !data) {
-    return <></>;
-  }
+  const Incidents = React.useMemo(
+    () =>
+      data ? (
+        <IncidentsList incidents={data.incidents.incidents} />
+      ) : (
+        <table
+          className={`table is-striped is-bordered is-hoverable is-fullwidth ${styles["fullheight-table"]}`}
+        >
+          {loading && <>Loader</>}
+          {!loading && <>No data.</>}
+        </table>
+      ),
+    [loading, data]
+  );
 
   const goNext = () => {
     setPagination({
@@ -44,13 +55,13 @@ function Incidents() {
   return (
     <>
       <Navbar active={"incidents"} />
-      <IncidentsList incidents={data.incidents.incidents} />
+      {Incidents}
       <div className={"columns"}>
         <div className={"column"}>
           <button
             className={`button ${styles["centered-button"]}`}
             onClick={goPrev}
-            disabled={pagination.page === 1}
+            disabled={!data || pagination.page === 1}
           >
             Previous
           </button>
@@ -60,8 +71,9 @@ function Incidents() {
             className={`button is-primary ${styles["centered-button"]}`}
             onClick={goNext}
             disabled={
+              !data ||
               pagination.page * pagination.size >=
-              data.incidents.pagination.total
+                data.incidents.pagination.total
             }
           >
             Next

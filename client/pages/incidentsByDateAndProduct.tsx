@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { INCIDENTS_BY_DATE_AND_PRODUCT } from "../gql/Queries";
 import { Incident } from "@itt/common";
@@ -16,14 +16,12 @@ interface IncidentsData {
 }
 
 const GroupedByDateAndProduct = () => {
+  const [pagination, setPagination] = useState({ size: 5, page: 1 });
   const { data, loading, error } = useQuery<IncidentsData>(
     INCIDENTS_BY_DATE_AND_PRODUCT,
     {
       variables: {
-        pagination: {
-          page: 1,
-          size: 5,
-        },
+        pagination,
       },
     }
   );
@@ -39,13 +37,20 @@ const GroupedByDateAndProduct = () => {
     return [];
   }, [data]);
 
-  if (
-    loading ||
-    !data ||
-    data.incidentsByDateAndProduct.incidents.length === 0
-  ) {
-    return <></>;
-  }
+  const goNext = () => {
+    setPagination({
+      size: pagination.size,
+      page: pagination.page + 1,
+    });
+  };
+
+  const goPrev = () => {
+    setPagination({
+      size: pagination.size,
+      page: pagination.page - 1,
+    });
+  };
+
   return (
     <>
       <Navbar active={"incidentsByDateAndProduct"} />
@@ -88,6 +93,30 @@ const GroupedByDateAndProduct = () => {
             />
           );
         })}
+      </div>
+      <div className={"columns"}>
+        <div className={"column"}>
+          <button
+            className={`button ${styles["centered-button"]}`}
+            onClick={goPrev}
+            disabled={!data || pagination.page === 1}
+          >
+            Previous
+          </button>
+        </div>
+        <div className={"column"}>
+          <button
+            className={`button is-primary ${styles["centered-button"]}`}
+            onClick={goNext}
+            disabled={
+              !data ||
+              pagination.page * pagination.size >=
+                data.incidentsByDateAndProduct.pagination.total
+            }
+          >
+            Next
+          </button>
+        </div>
       </div>
     </>
   );

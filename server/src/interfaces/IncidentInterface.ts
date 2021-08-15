@@ -58,22 +58,6 @@ class IncidentInterface {
     size: number,
     page: number
   ): Promise<{ incidents: Incident[][]; pagination: any }> {
-    const counter = await new Promise<number>((resolve, reject) => {
-      db.incidents.count(
-        {
-          type: "PRODUCT",
-          refundAmount: { $exists: true },
-          species: { $exists: true },
-        },
-        (err: Error | null, count) => {
-          if (err) {
-            reject(err);
-          }
-          resolve(count);
-        }
-      );
-    });
-
     const incidents = await new Promise<Incident[]>((resolve, reject) => {
       db.incidents
         .find({
@@ -96,10 +80,10 @@ class IncidentInterface {
     );
 
     return {
+      pagination: { total: Object.keys(grouped).length, page, size },
       incidents: Object.keys(grouped)
         .map((key) => grouped[key])
         .slice((page - 1) * size, page * size),
-      pagination: { total: counter, page, size },
     };
   }
 
