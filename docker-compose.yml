@@ -7,7 +7,7 @@ services:
   server:
     container_name: itt-server
     image: node:15.14.0-alpine3.12
-    command: "npm run dev -w server"
+    command: "npm run start -w server"
     ports:
       - 4000:4000
     user: node
@@ -18,7 +18,10 @@ services:
   client:
     container_name: itt-client
     image: node:15.14.0-alpine3.12
-    command: "npm run dev -w client"
+    command: >
+      sh -c "
+      npm run build -w client
+      && npm run start -w client"
     ports:
       - 3000:3000
     user: node
