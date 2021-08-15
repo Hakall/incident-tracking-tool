@@ -63,7 +63,7 @@ We talked about typescript together, as you know i'm working with this language 
 
 I choose npm workspaces because i like monorepos. Solutions exist like [lerna](https://github.com/lerna/lerna) and [nx ♥️](https://nx.dev/) but you said you like starting from scratch. Moreover it was the opportunity for testing this recent npm feature 🙂.
 
-For the same reason I did not use a framework for server but simply ts-node and ts-node-dev for running app, we do not need to transpile sources in that case 👍
+For server app ts-node and ts-node-dev is used to run project, we do not need to transpile sources in that case 👍
 
 For client, I had two choices [Next.js](https://nextjs.org/) and [CRA](https://create-react-app.dev/docs/getting-started/), in fact I started with CRA but I had problems with npm worskpaces and @itt-common shared library. So I switched to Next.js and I had to add this [additional module transpiler](https://www.npmjs.com/package/next-transpile-modules) in next.config.js.
 
@@ -72,9 +72,11 @@ I choose [jest](https://jestjs.io/fr/) for automated tests (+ [Enzyme](https://e
 ## Suggested improvements
 
 * Better design
+* Form validation error styling
 * More automated tests
 * Split [form.tsx](./client/pages/form.tsx) in multiple components (for all Controllers)
 * Search and autocomplete emails in [EmailsInput](./client/components/EmailsInput.tsx)
 * Default date to Today in date input
 * Design Dockerfiles for production mode
 * More description in Readme and more comments in code
+* change search/autocomplete strategy in relaypointInput
