@@ -5,6 +5,8 @@ import { Incident } from "@itt/common";
 import GroupByDateAndProduct from "../components/GroupByDateAndProduct";
 import { Pagination } from "@itt/common/src/models/pagination";
 
+import styles from "../styles/incidentsByDateAndProduct.module.css";
+
 interface IncidentsData {
   incidentsByDateAndProduct: {
     incidents: Incident[][];
@@ -19,7 +21,7 @@ const GroupedByDateAndProduct = () => {
       variables: {
         pagination: {
           page: 1,
-          size: 10,
+          size: 5,
         },
       },
     }
@@ -44,7 +46,20 @@ const GroupedByDateAndProduct = () => {
     return <></>;
   }
   return (
-    <>
+    <div className={`${styles["incidents-grouped"]}`}>
+      <div className={`columns ${styles["incidents-grouped-header"]}`}>
+        <div className={`column is-one-fifths has-text-centered`}>Espèce</div>
+        <div className={`column is-one-fifths has-text-centered`}>Date</div>
+        <div className={`column is-one-fifths has-text-centered`}>
+          Occurences
+        </div>
+        <div className={`column is-one-fifths has-text-centered`}>
+          Montant remboursé total
+        </div>
+        <div className={`column is-one-fifths has-text-centered`}>
+          Graphique des causes
+        </div>
+      </div>
       {groups.map((group) => {
         const groupData = group.reduce(
           (acc, curr) => {
@@ -70,7 +85,7 @@ const GroupedByDateAndProduct = () => {
           />
         );
       })}
-    </>
+    </div>
   );
 };
 

@@ -1,0 +1,28 @@
+.incidents-grouped {
+    margin-top: 15vh;
+}
+
+.incidents-grouped-header {
+    font-weight: 200;
+    border-bottom: solid 1px darkgray;
+}
+
+.incidents-grouped-tr {
+    border-bottom: solid 1px darkgray;
+}
+
+.incidents-grouped-tr:last-of-type{
+    border-bottom: none;
+}
+
+.incidents-grouped-tr-vertical-align {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.centered-button {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}

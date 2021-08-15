@@ -1,7 +1,9 @@
 import React from "react";
-import { ResponsiveBar, Bar } from "@nivo/bar";
+import { Bar } from "@nivo/bar";
 import { Incident, IncidentCause } from "@itt/common";
-import { causesColors, getCauseColor } from "../constants/colors";
+import { getCauseColor } from "../constants/colors";
+
+import styles from "../styles/incidentsByDateAndProduct.module.css";
 
 interface GroupByDateAndProductProps {
   group: {
@@ -37,14 +39,31 @@ const GroupByDateAndProduct = (props: GroupByDateAndProductProps) => {
     ];
   }, [incidents, name, date]);
   return (
-    <div>
-      {name}
-      occurrences:{occurrences}
-      totalRefundedAmount:{totalRefundedAmount}
-      <div>
+    <div className={`columns ${styles["incidents-grouped-tr"]}`}>
+      <div
+        className={`column is-one-fifths ${styles["incidents-grouped-tr-vertical-align"]}`}
+      >
+        {name}
+      </div>
+      <div
+        className={`column is-one-fifths ${styles["incidents-grouped-tr-vertical-align"]}`}
+      >
+        {date}
+      </div>
+      <div
+        className={`column is-one-fifths ${styles["incidents-grouped-tr-vertical-align"]} `}
+      >
+        {occurrences}
+      </div>
+      <div
+        className={`column is-one-fifths ${styles["incidents-grouped-tr-vertical-align"]}`}
+      >
+        {totalRefundedAmount}
+      </div>
+      <div className={`column is-one-fifths`}>
         <Bar
           height={200}
-          width={500}
+          width={200}
           data={data}
           // keys={["hot dog", "burger", "sandwich", "kebab", "fries", "donut"]}
           keys={causes.map(
