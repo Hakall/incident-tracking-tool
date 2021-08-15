@@ -38,6 +38,14 @@ function Incidents() {
     [loading, data]
   );
 
+  const totalPage = React.useMemo(
+    () =>
+      Math.floor(
+        data ? data.incidents.pagination.total / pagination.size + 1 : 1
+      ),
+    [data, pagination]
+  );
+
   const goNext = () => {
     setPagination({
       size: pagination.size,
@@ -78,6 +86,7 @@ function Incidents() {
           >
             Next
           </button>
+          Page {pagination.page} / {totalPage}
         </div>
       </div>
     </>

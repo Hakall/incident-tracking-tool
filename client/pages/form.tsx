@@ -126,16 +126,19 @@ function ITTForm() {
     skip: !emails || emails.length < 1 || !date,
   });
 
-  const populateFormFromIncident = React.useCallback((incident: Incident) => {
-    clearErrors();
-    setValue("relayPointId", incident.relayPoint._id);
-    setValue("type", incident.type);
-    setValue("cause", incident.cause);
-    setValue("resolution", incident.resolution);
-    setValue("refundAmount", incident.refundAmount);
-    setValue("comment", incident.comment);
-    setValue("speciesId", incident.species?._id);
-  }, []);
+  const populateFormFromIncident = React.useCallback(
+    (incident: Incident) => {
+      clearErrors();
+      setValue("relayPointId", incident.relayPoint._id);
+      setValue("type", incident.type);
+      setValue("cause", incident.cause);
+      setValue("resolution", incident.resolution);
+      setValue("refundAmount", incident.refundAmount);
+      setValue("comment", incident.comment);
+      setValue("speciesId", incident.species?._id);
+    },
+    [clearErrors, setValue]
+  );
 
   React.useEffect(() => {
     if (

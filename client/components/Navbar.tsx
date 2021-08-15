@@ -18,7 +18,7 @@ const Navbar = ({ active }: NavbarProps) => {
         }`}
       >
         <Link href="/form">
-          <a>Création d'incident</a>
+          <a>Création d&#39;incident</a>
         </Link>
       </div>
       <div

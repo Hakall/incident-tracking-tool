@@ -37,6 +37,17 @@ const GroupedByDateAndProduct = () => {
     return [];
   }, [data]);
 
+  const totalPage = React.useMemo(
+    () =>
+      Math.floor(
+        data
+          ? data.incidentsByDateAndProduct.pagination.total / pagination.size +
+              1
+          : 1
+      ),
+    [data, pagination]
+  );
+
   const goNext = () => {
     setPagination({
       size: pagination.size,
@@ -116,6 +127,7 @@ const GroupedByDateAndProduct = () => {
           >
             Next
           </button>
+          Page {pagination.page} / {totalPage}
         </div>
       </div>
     </>
