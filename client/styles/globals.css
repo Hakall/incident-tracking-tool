@@ -65,7 +65,6 @@ a {
   transform: translateX(50%) translateY(40%);
 }
 
-/* todo bulma theming*/
 .button.is-primary {
   color : rgba(0, 0, 0, 0.7) !important;
   background-color: #fee575 !important;

@@ -1,21 +1,13 @@
 import React, { useRef } from "react";
 import { useMutation, useQuery } from "@apollo/client";
-import { useForm, Controller, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
 import { Incident } from "@itt/common";
-
-import { EmailsInput } from "../components/EmailsInput";
-import { RelayPointsSelect } from "../components/RelayPointsSelect";
-import { IncidentTypeSelect } from "../components/IncidentTypeSelect";
-import { IncidentCauseSelect } from "../components/IncidentCauseSelect";
-import { IncidentResolutionSelect } from "../components/IncidentResolutionSelect";
-import { SpeciesSelect } from "../components/SpeciesSelect";
 import { Navbar } from "../components/Navbar";
 import { SimilarIncidentData } from "../components/SimilarIncident";
 import { CREATE_INCIDENT } from "../gql/Mutations";
 import { FIND_SIMILAR_INCIDENT } from "../gql/Queries";
-import { mailRegex } from "../constants/regex";
 
 import styles from "../styles/form.module.css";
 import { EmailsController } from "../components/form/EmailsController";
@@ -246,7 +238,6 @@ function ITTForm() {
             emailsRef={emailsRef}
             focusNext={focusNext}
           />
-          {/* todo default date this day, maybe from previous incident for same mail*/}
           <input
             type="date"
             className={"input"}

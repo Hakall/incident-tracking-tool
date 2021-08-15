@@ -72,10 +72,9 @@ I choose [jest](https://jestjs.io/fr/) for automated tests (+ [Enzyme](https://e
 ## Suggested improvements
 
 * test if donut is better than bar chart
+* bulma theming
 * findSimilarIncident, maybe test if incident.emails contains at least one matching mail
-* Default date to Today in date input
 * Form validation error styling
 * More automated tests
-* Search and autocomplete emails in [EmailsInput](./client/components/EmailsInput.tsx)
 * Design Dockerfiles for production mode
 * More description in Readme and more comments in code
