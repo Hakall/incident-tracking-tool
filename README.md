@@ -77,3 +77,4 @@ I choose [jest](https://jestjs.io/fr/) for automated tests (+ [Enzyme](https://e
 * Search and autocomplete emails in [EmailsInput](./client/components/EmailsInput.tsx)
 * Default date to Today in date input
 * Design Dockerfiles for production mode
+* More description in Readme and more comments in code
