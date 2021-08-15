@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { useForm, Controller, useWatch } from "react-hook-form";
+import { toast } from "react-toastify";
 
 import { Incident } from "@itt/common";
 
@@ -10,15 +11,35 @@ import { IncidentTypeSelect } from "../components/IncidentTypeSelect";
 import { IncidentCauseSelect } from "../components/IncidentCauseSelect";
 import { IncidentResolutionSelect } from "../components/IncidentResolutionSelect";
 import { SpeciesSelect } from "../components/SpeciesSelect";
+import { Navbar } from "../components/Navbar";
 import { SimilarIncidentData } from "../components/SimilarIncident";
 import { CREATE_INCIDENT } from "../gql/Mutations";
 import { FIND_SIMILAR_INCIDENT } from "../gql/Queries";
 import { mailRegex } from "../constants/regex";
 
 import styles from "../styles/form.module.css";
-import { Navbar } from "../components/Navbar";
 
 function ITTForm() {
+  const notifySuccess = () =>
+    toast.success("Incident créé avec succès", {
+      position: "bottom-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  const notifyError = () =>
+    toast.error("Incident créé avec succès", {
+      position: "bottom-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
   const [createIncident] = useMutation(CREATE_INCIDENT);
   const {
     clearErrors,
@@ -168,7 +189,7 @@ function ITTForm() {
     const incidentToCreate = getValues();
 
     try {
-      await createIncident({
+      const { data: createIncidentData, errors } = await createIncident({
         variables: {
           emails: incidentToCreate.emails.sort(),
           date: incidentToCreate.date,
@@ -196,9 +217,14 @@ function ITTForm() {
           cache.gc();
         },
       });
+      if (errors) {
+        notifyError();
+      }
+      if (createIncidentData) {
+        notifySuccess();
+        resetForm();
+      }
     } catch (e) {}
-
-    resetForm();
   };
 
   return (
